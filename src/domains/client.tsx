@@ -1,43 +1,24 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { AlertCircle, XCircle } from "lucide-react";
+import { AlertCircle, CheckCircle2, XCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { z } from "zod";
-
-const DomainResponseSchema = z.object({
-  name: z.string(),
-  apexName: z.string(),
-  projectId: z.string(),
-  redirect: z.string().nullable().optional(),
-  redirectStatusCode: z
-    .union([z.literal(307), z.literal(301), z.literal(302), z.literal(308)])
-    .nullable()
-    .optional(),
-  gitBranch: z.string().nullable().optional(),
-  updatedAt: z.number().optional(),
-  createdAt: z.number().optional(),
-  verified: z.boolean(),
-  verification: z.array(
-    z.object({
-      type: z.string(),
-      domain: z.string(),
-      value: z.string(),
-      reason: z.string(),
-    })
-  ),
-});
-
-export type DomainResponse = z.infer<typeof DomainResponseSchema>;
+import { useFormStatus } from "react-dom";
+import { getDomainStatus, updateSite } from "./actions";
+import { useQuery } from "@tanstack/react-query";
+import { Input } from "@/components/ui/input";
 
 function useDomainStatus(domain: string) {
+  const query = useQuery({
+    queryKey: [`custom-domain-status-${domain}`],
+    queryFn: () => getDomainStatus(domain),
+    refetchInterval: 5000,
+  });
+
   return {
-    status: null,
-    domainJson: null,
-    loading: false,
-  } as {
-    status: string | null;
-    domainJson: DomainResponse | null;
-    loading: boolean;
+    status: query.data?.status,
+    domainJson: query.data?.domainJson,
+    loading: query.isLoading,
   };
 }
 
@@ -65,7 +46,7 @@ const InlineSnippet = ({
   );
 };
 
-export function DomainConfiguration(props: { domain: string }) {
+function DomainConfiguration(props: { domain: string }) {
   const { domain } = props;
   const [recordType, setRecordType] = useState<"A" | "CNAME">("A");
 
@@ -74,6 +55,7 @@ export function DomainConfiguration(props: { domain: string }) {
   if (!status || status === "Valid Configuration" || !domainJson) return null;
 
   const subdomain = getSubdomain(domainJson.name, domainJson.apexName);
+  console.log(domainJson.name, domainJson.apexName, subdomain);
 
   const txtVerification =
     (status === "Pending Verification" &&
@@ -188,7 +170,9 @@ export function DomainConfiguration(props: { domain: string }) {
                 <p className="mt-2 font-mono text-sm">
                   {recordType === "A"
                     ? `76.76.21.21`
-                    : `cname.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`}
+                    : `cname.${
+                        process.env.NEXT_PUBLIC_ROOT_DOMAIN ?? "vercel-dns.com"
+                      }`}
                 </p>
               </div>
               <div>
@@ -204,6 +188,132 @@ export function DomainConfiguration(props: { domain: string }) {
           </div>
         </>
       )}
+    </div>
+  );
+}
+
+function FormButton() {
+  const { pending } = useFormStatus();
+  return (
+    <button
+      className={cn(
+        "flex h-8 w-32 items-center justify-center space-x-2 rounded-md border text-sm transition-all focus:outline-none sm:h-10",
+        pending
+          ? "cursor-not-allowed border-stone-200 bg-stone-100 text-stone-400 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-300"
+          : "border-black bg-black text-white hover:bg-white hover:text-black dark:border-stone-700 dark:hover:border-stone-200 dark:hover:bg-black dark:hover:text-white dark:active:bg-stone-800"
+      )}
+      disabled={pending}
+      type="submit"
+    >
+      {pending ? <p>Pending...</p> : <p>Save Changes</p>}
+    </button>
+  );
+}
+
+function DomainStatus({ domain }: { domain: string }) {
+  const { status, loading } = useDomainStatus(domain);
+
+  return loading ? (
+    // <LoadingSpinner /> <
+    <div>Loading...</div>
+  ) : status === "Valid Configuration" ? (
+    <CheckCircle2
+      fill="#2563EB"
+      stroke="currentColor"
+      className="text-white dark:text-black"
+    />
+  ) : status === "Pending Verification" ? (
+    <AlertCircle
+      fill="#FBBF24"
+      stroke="currentColor"
+      className="text-white dark:text-black"
+    />
+  ) : (
+    <XCircle
+      fill="#DC2626"
+      stroke="currentColor"
+      className="text-white dark:text-black"
+    />
+  );
+}
+
+export default function Form({
+  title,
+  description,
+  helpText,
+  defaultValue,
+}: {
+  title: string;
+  description: string;
+  helpText: string;
+  defaultValue?: string;
+}) {
+  const router = useRouter();
+  return (
+    <form
+      action={async (data: FormData) => {
+        const domain = data.get("customDomain") as string;
+        await updateSite(domain).then(async (res: any) => {
+          if (res.error) {
+            // TODO: Toast error
+            console.error(res.error);
+          } else {
+            router.refresh();
+
+            // TODO: Toast success
+            console.log("Success");
+          }
+        });
+      }}
+      className="rounded-lg border border-stone-200 bg-white dark:border-stone-700 dark:bg-black"
+    >
+      <div className="relative flex flex-col space-y-4 p-5 sm:p-10">
+        <h2 className="font-cal text-xl dark:text-white">{title}</h2>
+        <p className="text-sm text-stone-500 dark:text-stone-400">
+          {description}
+        </p>
+
+        <div className="relative flex w-full max-w-md">
+          <Input
+            type="text"
+            name="customDomain"
+            defaultValue={defaultValue}
+            placeholder={"example.com"}
+            maxLength={64}
+            pattern={
+              "^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?.)+[a-zA-Z]{2,}$"
+            }
+            className="z-10 flex-1 rounded-md border border-stone-300 text-sm text-stone-900 placeholder-stone-300 focus:border-stone-500 focus:outline-none focus:ring-stone-500 dark:border-stone-600 dark:bg-black dark:text-white dark:placeholder-stone-700"
+          />
+          {defaultValue && (
+            <div className="absolute right-3 z-10 flex h-full items-center">
+              <DomainStatus domain={defaultValue} />
+            </div>
+          )}
+        </div>
+      </div>
+      {defaultValue && <DomainConfiguration domain={defaultValue} />}
+      <div className="flex flex-col items-center justify-center space-y-2 rounded-b-lg border-t border-stone-200 bg-stone-50 p-3 sm:flex-row sm:justify-between sm:space-y-0 sm:px-10 dark:border-stone-700 dark:bg-stone-800">
+        <p className="text-sm text-stone-500 dark:text-stone-400">{helpText}</p>
+        <FormButton />
+      </div>
+    </form>
+  );
+}
+
+export function SiteSettingsDomains({
+  defaultValue,
+}: {
+  defaultValue?: string;
+}) {
+  return (
+    <div className="flex flex-col space-y-6">
+      <Form
+        title="Custom Domain"
+        description="The custom domain for your site."
+        helpText="Please enter a valid domain."
+        defaultValue={defaultValue}
+      />
     </div>
   );
 }

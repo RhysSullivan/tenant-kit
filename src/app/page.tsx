@@ -1,4 +1,4 @@
-import { DomainConfiguration } from "@/domains/client";
+import { SiteSettingsDomains } from "@/domains/client";
 import { Code } from "bright";
 import fs from "fs";
 export default function Home() {
@@ -7,8 +7,10 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <DomainConfiguration domain="hello" />
-      <Code lang="tsx" code={source} />
+      <SiteSettingsDomains defaultValue="test.rhyssul.com" />
+      <div className="max-w-[600px] overflow-x-auto">
+        <Code lang="tsx" code={source} />
+      </div>
     </main>
   );
 }
