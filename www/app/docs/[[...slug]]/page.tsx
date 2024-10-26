@@ -1,4 +1,4 @@
-import { source } from '@/lib/source';
+import { source } from '~/lib/source';
 import {
   DocsPage,
   DocsBody,
@@ -22,6 +22,7 @@ export default async function Page(props: {
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription>{page.data.description}</DocsDescription>
       <DocsBody>
+        {/* @ts-expect-error */}
         <MDX components={{ ...defaultMdxComponents }} />
       </DocsBody>
     </DocsPage>
