@@ -1,41 +1,95 @@
-import Link from 'next/link';
-import { SiteSettingsDomains } from '@tenant-kit/kit/domains/client';
+import Link from "next/link";
+import { SiteSettingsDomains } from "@tenant-kit/kit/domains/client";
+import { Button } from "@tenant-kit/kit/components/ui/button";
 
-export default function HomePage() {
+export default async function HomePage() {
+  // const recentDomains = await fetch(
+  //   `https://api.vercel.com/v5/projects/${
+  //     process.env.VERCEL_PROJECT_ID
+  //   }/domains${
+  //     process.env.VERCEL_TEAM_ID ? `?teamId=${process.env.VERCEL_TEAM_ID}` : ""
+  //   }`,
+  //   {
+  //     method: "GET",
+  //     headers: {
+  //       Authorization: `Bearer ${process.env.VERCEL_AUTH_TOKEN}`,
+  //       "Content-Type": "application/json",
+  //     },
+  //     next: {
+  //       revalidate: 600,
+  //     },
+  //   }
+  // ).then((res) => res.json());
+  // console.log(recentDomains);
   return (
-    <main className="flex flex-1 flex-col py-4 text-left">
-      <div className='mx-auto'>
-        <h1 className='text-2xl font-semibold'>Tenant Kit</h1>
-        <h2>A collection of documentation, components, and resources for building multi-tenant applications.</h2>
-        <div className='pt-32'>
-
-        <SiteSettingsDomains />
-        </div>
-        <div className='pt-12 flex flex-col'>
-
-        <span >This site will cover the following topics:</span>
+    <main className="flex flex-1 flex-col py-4 text-left ">
+      <div className="mx-auto pb-32 max-w-screen-lg">
+        <h1 className="text-2xl font-semibold pt-16">Tenant Kit</h1>
+        <h2 className="text-lg">
+          A collection of documentation, components, and resources for building
+          multi-tenant applications.
+        </h2>
+          <hr className="my-4" />
+        <div className="pt-4 flex flex-col">
+          <span className="text-base font-semibold">
+            This site will cover the following topics
+          </span>
           {/* Domains */}
-          <h3 className='text-lg font-semibold py-2'>Domains</h3>
+          <h3 className="text-base font-semibold py-2">Domains</h3>
           <ul>
-            <li className='pl-4'>Custom domains i.e tenant.example.com</li>
-            <li className='pl-4'>Subpaths i.e example.com/tenant</li>
+            <li className="pl-4">Custom domains i.e tenant.example.com</li>
+            <li className="pl-4">Subpaths i.e example.com/tenant</li>
+            <li className="pl-4">
+              Using a custom domain as a handle i.e Bluesky (ATProtocol)
+            </li>
           </ul>
           {/* Customization */}
-          <h3 className='text-lg font-semibold py-2'>Customization</h3>
+          <h3 className="text-base font-semibold py-2">Customization</h3>
           <ul>
-            <li className='pl-4'>Supporting custom HTML, CSS, and JavaScript</li>
-            <li className='pl-4'>Adding built in support for most analytics providers</li>
+            <li className="pl-4">
+              Supporting custom HTML, CSS, and JavaScript
+            </li>
+            <li className="pl-4">
+              Adding built in support for most analytics providers
+            </li>
           </ul>
           {/* Auth */}
-          <h3 className='text-lg font-semibold py-2'>Authentication</h3>
+          <h3 className="text-base font-semibold py-2">Authentication</h3>
           <ul>
-            <li className='pl-4'>Auth across subdomains, subpaths, and custom domains</li>
+            <li className="pl-4">
+              Auth across subdomains, subpaths, and custom domains
+            </li>
+          </ul>
+          {/* Hosting */}
+          <h3 className="text-base font-semibold py-2">Hosting</h3>
+          <ul>
+            <li className="pl-4">Multi tenancy on Vercel</li>
+            <li className="pl-4">Multi tenancy on Cloudflare</li>
+            <li className="pl-4">Multi tenancy on a $5 VPS</li>
           </ul>
         </div>
-        <div className='pt-4'>
-          Interested in sponsoring the development of this project? Reach out on 
-          {" "}<a href='https://twitter.com/rhyssullivan' className='hover:underline text-blue-300' target='_blank'>Twitter</a> or contact me at <a href='mailto:rhys@fumadocs.com'>me@rhys.dev</a>
+        <div className="pt-4">
+          Interested in sponsoring the development of this project? Reach out on{" "}
+          <a
+            href="https://twitter.com/rhyssullivan"
+            className="hover:underline text-blue-300"
+            target="_blank"
+          >
+            Twitter
+          </a>{" "}
+          or contact me at <a href="mailto:rhys@fumadocs.com">me@rhys.dev</a>
         </div>
+        <div className="mx-auto w-full flex justify-center py-8">
+          <Button asChild>
+            <Link
+              href="https://github.com/rhyssullivan/tenant-kit"
+              target="_blank"
+            >
+              Star on GitHub
+            </Link>
+          </Button>
+        </div>
+        <SiteSettingsDomains />
       </div>
     </main>
   );

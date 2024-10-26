@@ -38,9 +38,9 @@ const zDomainResponseSchema = z.object({
     })
   ),
 });
-export type DomainResponse = z.infer<typeof zDomainResponseSchema>;
+type DomainResponse = z.infer<typeof zDomainResponseSchema>;
 
-export const getDomainResponse = async (
+const getDomainResponse = async (
   domain: string
 ): Promise<DomainResponse & { error: { code: string; message: string } }> => {
   return await fetch(
@@ -81,20 +81,6 @@ const addDomainToVercel = async (domain: string) => {
   ).then((res) => res.json());
 };
 
-const removeDomainFromVercelProject = async (domain: string) => {
-  return await fetch(
-    `https://api.vercel.com/v9/projects/${VERCEL_PROJECT_ID}/domains/${domain}${
-      VERCEL_TEAM_ID ? `?teamId=${VERCEL_TEAM_ID}` : ""
-    }`,
-    {
-      headers: {
-        Authorization: `Bearer ${VERCEL_AUTH_TOKEN}`,
-      },
-      method: "DELETE",
-    }
-  ).then((res) => res.json());
-};
-
 export const updateSite = async (domain: string) => {
   if (domain.includes("vercel.pub")) {
     return {
@@ -104,7 +90,17 @@ export const updateSite = async (domain: string) => {
 
   // empty value means the user wants to remove the custom domain
   if (domain === "") {
-    await removeDomainFromVercelProject(domain);
+    await fetch(
+      `https://api.vercel.com/v9/projects/${VERCEL_PROJECT_ID}/domains/${domain}${
+        VERCEL_TEAM_ID ? `?teamId=${VERCEL_TEAM_ID}` : ""
+      }`,
+      {
+        headers: {
+          Authorization: `Bearer ${VERCEL_AUTH_TOKEN}`,
+        },
+        method: "DELETE",
+      }
+    )
   } else {
     await Promise.all([
       addDomainToVercel(domain),

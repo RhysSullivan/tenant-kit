@@ -9,6 +9,7 @@
     "postinstall": "fumadocs-mdx"
   },
   "dependencies": {
+    "@tailwindcss/typography": "^0.5.15",
     "@tanstack/react-query": "^5.50.1",
     "@tenant-kit/kit": "workspace:*",
     "fumadocs-core": "14.0.2",

@@ -86,6 +86,9 @@ importers:
 
   www:
     dependencies:
+      '@tailwindcss/typography':
+        specifier: ^0.5.15
+        version: 0.5.15(tailwindcss@3.4.14)
       '@tanstack/react-query':
         specifier: ^5.50.1
         version: 5.50.1(react@19.0.0-rc-cae764ce-20241025)

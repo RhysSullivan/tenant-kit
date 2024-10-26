@@ -11,6 +11,7 @@ export const baseOptions: BaseLayoutProps = {
   nav: {
     title: 'Tenant Kit',
   },
+  githubUrl: 'https://github.com/rhyssullivan/tenant-kit',
   // links: [
   //   {
   //     text: 'Documentation',
