@@ -1,12 +1,14 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { AlertCircle, CheckCircle2, XCircle } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
+
+import { AlertCircle, CheckCircle2, XCircle, LoaderCircle } from "lucide-react";
+
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
+
 import { getDomainStatus, updateSite } from "./actions";
 import { useQuery } from "@tanstack/react-query";
-import { Input } from "@/components/ui/input";
 
 function useDomainStatus(domain: string) {
   const query = useQuery({
@@ -55,7 +57,6 @@ function DomainConfiguration(props: { domain: string }) {
   if (!status || status === "Valid Configuration" || !domainJson) return null;
 
   const subdomain = getSubdomain(domainJson.name, domainJson.apexName);
-  console.log(domainJson.name, domainJson.apexName, subdomain);
 
   const txtVerification =
     (status === "Pending Verification" &&
@@ -211,11 +212,11 @@ function FormButton() {
 }
 
 function DomainStatus({ domain }: { domain: string }) {
-  const { status, loading } = useDomainStatus(domain);
+  let { status, loading } = useDomainStatus(domain);
 
   return loading ? (
-    // <LoadingSpinner /> <
-    <div>Loading...</div>
+    // rotating circle
+    <LoaderCircle className="dark:text-white text-black animate-spin" />
   ) : status === "Valid Configuration" ? (
     <CheckCircle2
       fill="#2563EB"
@@ -237,83 +238,52 @@ function DomainStatus({ domain }: { domain: string }) {
   );
 }
 
-export default function Form({
-  title,
-  description,
-  helpText,
-  defaultValue,
-}: {
-  title: string;
-  description: string;
-  helpText: string;
-  defaultValue?: string;
-}) {
-  const router = useRouter();
-  return (
-    <form
-      action={async (data: FormData) => {
-        const domain = data.get("customDomain") as string;
-        await updateSite(domain).then(async (res: any) => {
-          if (res.error) {
-            // TODO: Toast error
-            console.error(res.error);
-          } else {
-            router.refresh();
-
-            // TODO: Toast success
-            console.log("Success");
-          }
-        });
-      }}
-      className="rounded-lg border border-stone-200 bg-white dark:border-stone-700 dark:bg-black"
-    >
-      <div className="relative flex flex-col space-y-4 p-5 sm:p-10">
-        <h2 className="font-cal text-xl dark:text-white">{title}</h2>
-        <p className="text-sm text-stone-500 dark:text-stone-400">
-          {description}
-        </p>
-
-        <div className="relative flex w-full max-w-md">
-          <Input
-            type="text"
-            name="customDomain"
-            defaultValue={defaultValue}
-            placeholder={"example.com"}
-            maxLength={64}
-            pattern={
-              "^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?.)+[a-zA-Z]{2,}$"
-            }
-            className="z-10 flex-1 rounded-md border border-stone-300 text-sm text-stone-900 placeholder-stone-300 focus:border-stone-500 focus:outline-none focus:ring-stone-500 dark:border-stone-600 dark:bg-black dark:text-white dark:placeholder-stone-700"
-          />
-          {defaultValue && (
-            <div className="absolute right-3 z-10 flex h-full items-center">
-              <DomainStatus domain={defaultValue} />
-            </div>
-          )}
-        </div>
-      </div>
-      {defaultValue && <DomainConfiguration domain={defaultValue} />}
-      <div className="flex flex-col items-center justify-center space-y-2 rounded-b-lg border-t border-stone-200 bg-stone-50 p-3 sm:flex-row sm:justify-between sm:space-y-0 sm:px-10 dark:border-stone-700 dark:bg-stone-800">
-        <p className="text-sm text-stone-500 dark:text-stone-400">{helpText}</p>
-        <FormButton />
-      </div>
-    </form>
-  );
-}
-
-export function SiteSettingsDomains({
-  defaultValue,
-}: {
-  defaultValue?: string;
-}) {
+export function SiteSettingsDomains() {
+  const [domain, setDomain] = useState<string | null>(null);
   return (
     <div className="flex flex-col space-y-6">
-      <Form
-        title="Custom Domain"
-        description="The custom domain for your site."
-        helpText="Please enter a valid domain."
-        defaultValue={defaultValue}
-      />
+      <form
+        action={async (data: FormData) => {
+          const domain = data.get("customDomain") as string;
+          await updateSite(domain).then(async (res: any) => {
+            if (res.error) {
+              console.error(res.error);
+            } else {
+              setDomain(domain);
+            }
+          });
+        }}
+        className="rounded-lg border border-stone-200 bg-white dark:border-stone-700 dark:bg-black"
+      >
+        <div className="relative flex flex-col space-y-4 p-5 sm:p-10">
+          <h2 className="font-cal text-xl dark:text-white">Custom Domain</h2>
+          <p className="text-sm text-stone-500 dark:text-stone-400">
+            The custom domain for your site.
+          </p>
+
+          <div className="relative flex w-full max-w-md">
+            <Input
+              type="text"
+              name="customDomain"
+              placeholder={"example.com"}
+              maxLength={64}
+              className="z-10 flex-1 rounded-md border border-stone-300 text-sm text-stone-900 placeholder-stone-300 focus:border-stone-500 focus:outline-none focus:ring-stone-500 dark:border-stone-600 dark:bg-black dark:text-white dark:placeholder-stone-700"
+            />
+            {domain && (
+              <div className="absolute right-3 z-10 flex h-full items-center">
+                <DomainStatus domain={domain} />
+              </div>
+            )}
+          </div>
+        </div>
+        {domain && <DomainConfiguration domain={domain} />}
+        <div className="flex flex-col items-center justify-center space-y-2 rounded-b-lg border-t border-stone-200 bg-stone-50 p-3 sm:flex-row sm:justify-between sm:space-y-0 sm:px-10 dark:border-stone-700 dark:bg-stone-800">
+          <p className="text-sm text-stone-500 dark:text-stone-400">
+            Please enter a valid domain.
+          </p>
+          <FormButton />
+        </div>
+      </form>
     </div>
   );
 }
