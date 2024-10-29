@@ -22,18 +22,18 @@ export default async function HomePage() {
   // ).then((res) => res.json());
   // console.log(recentDomains);
   return (
-    <main className="flex flex-1 flex-col py-4 text-left ">
-      <div className="mx-auto pb-32 max-w-screen-lg">
-        <h1 className="text-2xl font-semibold pt-16">Tenant Kit</h1>
+    <main className=" w-full px-4 ">
+      <div className="pb-32 max-w-screen-lg mx-auto">
+        <h1 className="text-2xl font-semibold pt-4">Tenant Kit</h1>
         <h2 className="text-lg">
           A collection of documentation, components, and resources for building
           multi-tenant applications.
         </h2>
-          <hr className="my-4" />
-        <div className="pt-4 flex flex-col">
-          <span className="text-base font-semibold">
+          <hr className="mt-4" />
+        <div className="py-4 flex flex-col">
+          <div className="text-base pb-2 ">
             This site will cover the following topics
-          </span>
+          </div>
           {/* Domains */}
           <h3 className="text-base font-semibold py-2">Domains</h3>
           <ul>
@@ -68,7 +68,10 @@ export default async function HomePage() {
             <li className="pl-4">Multi tenancy on a $5 VPS</li>
           </ul>
         </div>
-        <div className="pt-4">
+       
+
+        <SiteSettingsDomains />
+        <div className="py-4">
           Interested in sponsoring the development of this project? Reach out on{" "}
           <a
             href="https://twitter.com/rhyssullivan"
@@ -80,7 +83,7 @@ export default async function HomePage() {
           or contact me at <a href="mailto:rhys@fumadocs.com">me@rhys.dev</a>
         </div>
         <div className="mx-auto w-full flex justify-center py-8">
-          <Button asChild>
+          <Button asChild variant="outline">
             <Link
               href="https://github.com/rhyssullivan/tenant-kit"
               target="_blank"
@@ -89,7 +92,7 @@ export default async function HomePage() {
             </Link>
           </Button>
         </div>
-        <SiteSettingsDomains />
+        
       </div>
     </main>
   );
