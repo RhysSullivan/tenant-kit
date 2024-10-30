@@ -95,6 +95,9 @@ importers:
       '@tenant-kit/kit':
         specifier: workspace:*
         version: link:../kit
+      bright:
+        specifier: ^0.8.5
+        version: 0.8.5(react@19.0.0-rc-cae764ce-20241025)
       fumadocs-core:
         specifier: 14.0.2
         version: 14.0.2(types-react@19.0.0-rc.1)
@@ -104,6 +107,9 @@ importers:
       fumadocs-ui:
         specifier: 14.0.2
         version: 14.0.2(next@15.0.0(react-dom@19.0.0-rc-cae764ce-20241025(react@19.0.0-rc-cae764ce-20241025))(react@19.0.0-rc-cae764ce-20241025))(react-dom@19.0.0-rc-cae764ce-20241025(react@19.0.0-rc-cae764ce-20241025))(react@19.0.0-rc-cae764ce-20241025)(types-react-dom@19.0.0-rc.1)(types-react@19.0.0-rc.1)
+      lucide-react:
+        specifier: ^0.400.0
+        version: 0.400.0(react@19.0.0-rc-cae764ce-20241025)
       next:
         specifier: 15.0.0
         version: 15.0.0(react-dom@19.0.0-rc-cae764ce-20241025(react@19.0.0-rc-cae764ce-20241025))(react@19.0.0-rc-cae764ce-20241025)

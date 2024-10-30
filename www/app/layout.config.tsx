@@ -12,11 +12,11 @@ export const baseOptions: BaseLayoutProps = {
     title: 'Tenant Kit',
   },
   githubUrl: 'https://github.com/rhyssullivan/tenant-kit',
-  // links: [
-  //   {
-  //     text: 'Documentation',
-  //     url: '/docs',
-  //     active: 'nested-url',
-  //   },
-  // ],
+  links: [
+    {
+      text: 'Documentation',
+      url: '/docs',
+      active: 'nested-url',
+    },
+  ],
 };

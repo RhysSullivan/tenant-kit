@@ -1,35 +1,47 @@
 import Link from "next/link";
 import { SiteSettingsDomains } from "@tenant-kit/kit/domains/client";
 import { Button } from "@tenant-kit/kit/components/ui/button";
-
+import { DomainStatusCard } from "./components";
+type ProjectDetails = {
+  name: string;
+  apexName: string;
+  projectId: string;
+  redirect: string | null;
+  redirectStatusCode: number | null;
+  gitBranch: string | null;
+  customEnvironmentId: string | null;
+  updatedAt: number;
+  createdAt: number;
+  verified: boolean;
+};
 export default async function HomePage() {
-  // const recentDomains = await fetch(
-  //   `https://api.vercel.com/v5/projects/${
-  //     process.env.VERCEL_PROJECT_ID
-  //   }/domains${
-  //     process.env.VERCEL_TEAM_ID ? `?teamId=${process.env.VERCEL_TEAM_ID}` : ""
-  //   }`,
-  //   {
-  //     method: "GET",
-  //     headers: {
-  //       Authorization: `Bearer ${process.env.VERCEL_AUTH_TOKEN}`,
-  //       "Content-Type": "application/json",
-  //     },
-  //     next: {
-  //       revalidate: 600,
-  //     },
-  //   }
-  // ).then((res) => res.json());
-  // console.log(recentDomains);
+  const recentDomains: ProjectDetails[] = await fetch(
+    `https://api.vercel.com/v5/projects/${
+      process.env.VERCEL_PROJECT_ID
+    }/domains${
+      process.env.VERCEL_TEAM_ID ? `?teamId=${process.env.VERCEL_TEAM_ID}` : ""
+    }`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${process.env.VERCEL_AUTH_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      next: {
+        revalidate: 600,
+      },
+    }
+  ).then(async (res) => (await res.json()).domains.slice(0, 5));
+  console.log(recentDomains);
   return (
     <main className=" w-full px-4 ">
       <div className="pb-32 max-w-screen-lg mx-auto">
-        <h1 className="text-2xl font-semibold pt-4">Tenant Kit</h1>
+        <h1 className="text-2xl font-semibold pt-4">Quickly build multi-tenant applications</h1>
         <h2 className="text-lg">
           A collection of documentation, components, and resources for building
           multi-tenant applications.
         </h2>
-          <hr className="mt-4" />
+        <hr className="mt-4" />
         <div className="py-4 flex flex-col">
           <div className="text-base pb-2 ">
             This site will cover the following topics
@@ -68,9 +80,13 @@ export default async function HomePage() {
             <li className="pl-4">Multi tenancy on a $5 VPS</li>
           </ul>
         </div>
-       
-
         <SiteSettingsDomains />
+        <div className="py-4">Recently Added Domains</div>
+        <div className="flex flex-col gap-2">
+          {recentDomains.map((domain) => (
+            <DomainStatusCard key={domain.name} domain={domain.name} />
+          ))}
+        </div>
         <div className="py-4">
           Interested in sponsoring the development of this project? Reach out on{" "}
           <a
@@ -92,7 +108,6 @@ export default async function HomePage() {
             </Link>
           </Button>
         </div>
-        
       </div>
     </main>
   );

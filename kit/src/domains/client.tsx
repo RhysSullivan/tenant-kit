@@ -49,7 +49,7 @@ function DNSRecordDisplay({ record }: { record: DNSRecord }) {
   );
 }
 
-function useDomainStatus(domain: string) {
+export function useDomainStatus(domain: string) {
   const query = useQuery({
     queryKey: [`custom-domain-status-${domain}`],
     queryFn: () => getDomainStatus(domain),
@@ -231,7 +231,7 @@ function FormButton() {
   );
 }
 
-function DomainStatus({ domain }: { domain: string }) {
+export function DomainStatus({ domain }: { domain: string }) {
   const { status, loading } = useDomainStatus(domain);
   if (loading) {
     return <LoaderCircle className="dark:text-white text-black animate-spin" />;
@@ -263,11 +263,23 @@ function DomainStatus({ domain }: { domain: string }) {
       />
     );
   }
+  if(status === 'Invalid Configuration'){
+    return (
+      <XCircle
+        fill="#DC2626"
+        stroke="currentColor"
+        className="text-white dark:text-black"
+      />
+    );
+  }
+  console.log(status);
   return null;
 }
 
-export function SiteSettingsDomains() {
-  const [domain, setDomain] = useState<string | null>(null);
+export function SiteSettingsDomains(props: {
+  defaultDomain?: string;
+}) {
+  const [domain, setDomain] = useState<string | null>(props.defaultDomain ?? null);
   return (
     <Card className="flex flex-col space-y-6">
       <form
@@ -290,6 +302,7 @@ export function SiteSettingsDomains() {
             placeholder={"example.com"}
             maxLength={64}
             className="max-w-sm bg-background"
+            defaultValue={props.defaultDomain}
           />
           <div className="flex items-center space-x-2">
             {domain && <DomainStatus domain={domain} />}
