@@ -15,24 +15,29 @@ type ProjectDetails = {
 	verified: boolean;
 };
 export default async function HomePage() {
-	const recentDomains: ProjectDetails[] = await fetch(
-		`https://api.vercel.com/v5/projects/${
-			process.env.VERCEL_PROJECT_ID
-		}/domains${
-			process.env.VERCEL_TEAM_ID ? `?teamId=${process.env.VERCEL_TEAM_ID}` : ""
-		}`,
-		{
-			method: "GET",
-			headers: {
-				Authorization: `Bearer ${process.env.VERCEL_AUTH_TOKEN}`,
-				"Content-Type": "application/json",
-			},
-			next: {
-				revalidate: 600,
-			},
-		},
-	).then(async (res) => (await res.json()).domains.slice(0, 5));
-	console.log(recentDomains);
+	const recentDomains: ProjectDetails[] =
+		process.env.NODE_ENV === "development"
+			? []
+			: await fetch(
+					`https://api.vercel.com/v5/projects/${
+						process.env.VERCEL_PROJECT_ID
+					}/domains${
+						process.env.VERCEL_TEAM_ID
+							? `?teamId=${process.env.VERCEL_TEAM_ID}`
+							: ""
+					}`,
+					{
+						method: "GET",
+						headers: {
+							Authorization: `Bearer ${process.env.VERCEL_AUTH_TOKEN}`,
+							"Content-Type": "application/json",
+						},
+						next: {
+							revalidate: 600,
+						},
+					},
+				).then(async (res) => (await res.json()).domains.slice(0, 5));
+
 	return (
 		<main className=" w-full px-4 ">
 			<div className="pb-32 max-w-screen-lg mx-auto">
@@ -94,7 +99,8 @@ export default async function HomePage() {
 					<a
 						href="https://twitter.com/rhyssullivan"
 						className="hover:underline text-blue-300"
-						target="_blank" rel="noreferrer"
+						target="_blank"
+						rel="noreferrer"
 					>
 						Twitter
 					</a>{" "}

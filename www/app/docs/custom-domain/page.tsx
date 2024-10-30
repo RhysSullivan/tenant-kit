@@ -48,7 +48,7 @@ export default function Page() {
 						</TabsContent>
 					</Tabs>
 				</div>
-				<div className="py-4 not-prose flex gap-4 flex-col">
+				<div className="py-4 not-prose flex gap-12 flex-col">
 					<div className="flex flex-col gap-1">
 						<span className="text-xl font-semibold">Examples</span>
 						<hr className="mb-1" />

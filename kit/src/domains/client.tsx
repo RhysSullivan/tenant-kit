@@ -23,7 +23,7 @@ type DNSRecord = {
 	type: string;
 	name: string;
 	value: string;
-	ttl: string;
+	ttl?: string;
 };
 
 function DNSRecordDisplay({ record }: { record: DNSRecord }) {
@@ -41,10 +41,12 @@ function DNSRecordDisplay({ record }: { record: DNSRecord }) {
 				<p className="text-sm text-muted-foreground">Value</p>
 				<p className="mt-2 text-sm">{record.value}</p>
 			</div>
-			<div>
-				<p className="text-sm text-muted-foreground">TTL</p>
-				<p className="mt-2 text-sm">{record.ttl}</p>
-			</div>
+			{record.ttl && (
+				<div>
+					<p className="text-sm text-muted-foreground">TTL</p>
+					<p className="mt-2 text-sm">{record.ttl}</p>
+				</div>
+			)}
 		</div>
 	);
 }
@@ -103,9 +105,7 @@ function DomainConfiguration(props: { domain: string }) {
 		null;
 
 	if (status === "Unknown Error") {
-		return (
-			<p className="mb-5 text-sm dark:text-white">{domainJson.error.message}</p>
-		);
+		return <p className="mb-5 text-sm">{domainJson.error.message}</p>;
 	}
 
 	console.log(domainJson, domainJson.name, domainJson.apexName);
@@ -129,7 +129,8 @@ function DomainConfiguration(props: { domain: string }) {
 						value="txt"
 						className={cn(
 							"bg-background p-2  text-muted-foreground rounded-none border-b-muted",
-							selectedTab === "txt" && "border-b-white border-b-2 text-primary",
+							selectedTab === "txt" &&
+								"border-b-primary border-b-2 text-primary",
 						)}
 					>
 						Domain Verification
@@ -141,7 +142,7 @@ function DomainConfiguration(props: { domain: string }) {
 							className={cn(
 								"bg-background p-2 text-muted-foreground  rounded-none border-b-muted",
 								selectedTab === "subdomain" &&
-									"border-b-white border-b-2 text-primary",
+									"border-b-primary border-b-2 text-primary",
 							)}
 						>
 							CNAME (Recommended)
@@ -152,7 +153,7 @@ function DomainConfiguration(props: { domain: string }) {
 								className={cn(
 									"bg-background   p-2 text-muted-foreground rounded-none border-b-muted",
 									selectedTab === "apex" &&
-										"border-b-white border-b-2  text-primary",
+										"border-b-primary border-b-2  text-primary",
 								)}
 							>
 								Apex
@@ -165,35 +166,24 @@ function DomainConfiguration(props: { domain: string }) {
 			{txtVerification && (
 				<TabsContent value="txt">
 					<div className="flex flex-col space-y-4 pt-4">
-						<p className="text-sm dark:text-white">
+						<p className="text-sm text-muted-foreground ">
 							Please set the following TXT record on{" "}
 							<InlineSnippet>{domainJson.apexName}</InlineSnippet> to prove
 							ownership of <InlineSnippet>{domainJson.name}</InlineSnippet>:
 						</p>
-						<div className="my-5 flex items-start justify-start space-x-10 rounded-md bg-stone-50 p-2 dark:bg-stone-800 dark:text-white">
-							<div>
-								<p className="text-sm font-bold">Type</p>
-								<p className="mt-2 font-mono text-sm">{txtVerification.type}</p>
-							</div>
-							<div>
-								<p className="text-sm font-bold">Name</p>
-								<p className="mt-2 font-mono text-sm">
-									{txtVerification.domain.slice(
-										0,
-										txtVerification.domain.length -
-											domainJson.apexName.length -
-											1,
-									)}
-								</p>
-							</div>
-							<div>
-								<p className="text-sm font-bold">Value</p>
-								<p className="mt-2 font-mono text-sm">
-									<span className="text-ellipsis">{txtVerification.value}</span>
-								</p>
-							</div>
-						</div>
-						<p className="text-sm dark:text-stone-400">
+						<DNSRecordDisplay
+							record={{
+								name: txtVerification.domain.slice(
+									0,
+									txtVerification.domain.length -
+										domainJson.apexName.length -
+										1,
+								),
+								type: txtVerification.type,
+								value: txtVerification.value,
+							}}
+						/>
+						<p className="text-sm text-muted-foreground mt-4">
 							Warning: if you are using this domain for another site, setting
 							this TXT record will transfer domain ownership away from that site
 							and break it. Please exercise caution when setting this record.
@@ -332,7 +322,7 @@ export function SiteSettingsDomains(props: {
 				}}
 			>
 				<CardHeader>
-					<CardTitle>Custom Domain</CardTitle>
+					<CardTitle className="text-lg font-semibold">Custom Domain</CardTitle>
 					<CardDescription>The custom domain for your site.</CardDescription>
 				</CardHeader>
 				<CardContent className="relative bg-background flex flex-row items-center justify-between w-full">
