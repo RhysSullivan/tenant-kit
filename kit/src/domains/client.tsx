@@ -7,7 +7,7 @@ import { AlertCircle, CheckCircle2, XCircle, LoaderCircle } from "lucide-react";
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
 
-import { getDomainStatus, updateSite } from "./actions";
+import { getDomainStatus, addDomain } from "./actions";
 import { useQuery } from "@tanstack/react-query";
 import {
 	Card,
@@ -328,7 +328,7 @@ export function SiteSettingsDomains(props: {
 					const data = new FormData(event.currentTarget);
 					const domain = data.get("customDomain") as string;
 					setDomain(domain);
-					await updateSite(domain);
+					await addDomain(domain);
 				}}
 			>
 				<CardHeader>

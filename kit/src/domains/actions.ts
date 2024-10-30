@@ -1,49 +1,44 @@
 "use server";
 import { z } from "zod";
 
-const VERCEL_PROJECT_ID = process.env.VERCEL_PROJECT_ID;
-const VERCEL_TEAM_ID = process.env.VERCEL_TEAM_ID;
-const VERCEL_AUTH_TOKEN = process.env.VERCEL_AUTH_TOKEN;
-
-// https://vercel.com/docs/rest-api/endpoints#get-a-domain-s-configuration
-interface DomainConfigResponse {
-	configuredBy?: ("CNAME" | "A" | "http") | null;
-	acceptedChallenges?: ("dns-01" | "http-01")[];
-	misconfigured: boolean;
-}
-
-const zDomainResponseSchema = z.object({
-	name: z.string(),
-	apexName: z.string(),
-	projectId: z.string(),
-	redirect: z.string().nullable().optional(),
-	redirectStatusCode: z
-		.union([z.literal(307), z.literal(301), z.literal(302), z.literal(308)])
-		.nullable()
-		.optional(),
-	gitBranch: z.string().nullable().optional(),
-	updatedAt: z.number().optional(),
-	createdAt: z.number().optional(),
-	verified: z.boolean(),
-	verification: z.array(
-		z.object({
-			type: z.string(),
-			domain: z.string(),
-			value: z.string(),
-			reason: z.string(),
-		}),
-	),
-});
-type DomainResponse = z.infer<typeof zDomainResponseSchema>;
-
-export type DomainVerificationStatusProps =
-	| "Valid Configuration"
-	| "Invalid Configuration"
-	| "Pending Verification"
-	| "Domain Not Found"
-	| "Unknown Error";
-
+// Wrap the Vercel API in a namespace to keep addDomain and getDomainStatus focused on their own logic
 namespace VercelAPI {
+	const VERCEL_PROJECT_ID = process.env.VERCEL_PROJECT_ID;
+	const VERCEL_TEAM_ID = process.env.VERCEL_TEAM_ID;
+	const VERCEL_AUTH_TOKEN = process.env.VERCEL_AUTH_TOKEN;
+
+	const zDomainResponseSchema = z.object({
+		name: z.string(),
+		apexName: z.string(),
+		projectId: z.string(),
+		redirect: z.string().nullable().optional(),
+		redirectStatusCode: z
+			.union([z.literal(307), z.literal(301), z.literal(302), z.literal(308)])
+			.nullable()
+			.optional(),
+		gitBranch: z.string().nullable().optional(),
+		updatedAt: z.number().optional(),
+		createdAt: z.number().optional(),
+		verified: z.boolean(),
+		verification: z.array(
+			z.object({
+				type: z.string(),
+				domain: z.string(),
+				value: z.string(),
+				reason: z.string(),
+			}),
+		),
+	});
+
+	type DomainResponse = z.infer<typeof zDomainResponseSchema>;
+
+	// https://vercel.com/docs/rest-api/endpoints#get-a-domain-s-configuration
+	interface DomainConfigResponse {
+		configuredBy?: ("CNAME" | "A" | "http") | null;
+		acceptedChallenges?: ("dns-01" | "http-01")[];
+		misconfigured: boolean;
+	}
+
 	export const getDomainResponse = async (
 		domain: string,
 	): Promise<DomainResponse & { error: { code: string; message: string } }> => {
@@ -120,7 +115,14 @@ namespace VercelAPI {
 	};
 }
 
-export const updateSite = async (domain: string) => {
+type DomainVerificationStatusProps =
+	| "Valid Configuration"
+	| "Invalid Configuration"
+	| "Pending Verification"
+	| "Domain Not Found"
+	| "Unknown Error";
+
+export const addDomain = async (domain: string) => {
 	if (domain.includes("vercel.pub")) {
 		return {
 			error: "Cannot use vercel.pub subdomain as your custom domain",
