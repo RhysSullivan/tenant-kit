@@ -2,17 +2,13 @@
 import { z } from "zod";
 
 const VERCEL_PROJECT_ID = process.env.VERCEL_PROJECT_ID;
-// optional
 const VERCEL_TEAM_ID = process.env.VERCEL_TEAM_ID;
 const VERCEL_AUTH_TOKEN = process.env.VERCEL_AUTH_TOKEN;
 
-// From https://vercel.com/docs/rest-api/endpoints#get-a-domain-s-configuration
+// https://vercel.com/docs/rest-api/endpoints#get-a-domain-s-configuration
 interface DomainConfigResponse {
-	/** How we see the domain's configuration. - `CNAME`: Domain has a CNAME pointing to Vercel. - `A`: Domain's A record is resolving to Vercel. - `http`: Domain is resolving to Vercel but may be behind a Proxy. - `null`: Domain is not resolving to Vercel. */
 	configuredBy?: ("CNAME" | "A" | "http") | null;
-	/** Which challenge types the domain can use for issuing certs. */
 	acceptedChallenges?: ("dns-01" | "http-01")[];
-	/** Whether or not the domain is configured AND we can automatically generate a TLS certificate. */
 	misconfigured: boolean;
 }
 
@@ -40,46 +36,89 @@ const zDomainResponseSchema = z.object({
 });
 type DomainResponse = z.infer<typeof zDomainResponseSchema>;
 
-const getDomainResponse = async (
-	domain: string,
-): Promise<DomainResponse & { error: { code: string; message: string } }> => {
-	return await fetch(
-		`https://api.vercel.com/v9/projects/${VERCEL_PROJECT_ID}/domains/${domain}${
-			VERCEL_TEAM_ID ? `?teamId=${VERCEL_TEAM_ID}` : ""
-		}`,
-		{
-			method: "GET",
-			headers: {
-				Authorization: `Bearer ${VERCEL_AUTH_TOKEN}`,
-				"Content-Type": "application/json",
-			},
-		},
-	).then((res) => {
-		return res.json();
-	});
-};
+export type DomainVerificationStatusProps =
+	| "Valid Configuration"
+	| "Invalid Configuration"
+	| "Pending Verification"
+	| "Domain Not Found"
+	| "Unknown Error";
 
-const addDomainToVercel = async (domain: string) => {
-	return await fetch(
-		`https://api.vercel.com/v10/projects/${VERCEL_PROJECT_ID}/domains${
-			VERCEL_TEAM_ID ? `?teamId=${VERCEL_TEAM_ID}` : ""
-		}`,
-		{
-			method: "POST",
-			headers: {
-				Authorization: `Bearer ${VERCEL_AUTH_TOKEN}`,
-				"Content-Type": "application/json",
+namespace VercelAPI {
+	export const getDomainResponse = async (
+		domain: string,
+	): Promise<DomainResponse & { error: { code: string; message: string } }> => {
+		return await fetch(
+			`https://api.vercel.com/v9/projects/${VERCEL_PROJECT_ID}/domains/${domain}${
+				VERCEL_TEAM_ID ? `?teamId=${VERCEL_TEAM_ID}` : ""
+			}`,
+			{
+				method: "GET",
+				headers: {
+					Authorization: `Bearer ${VERCEL_AUTH_TOKEN}`,
+					"Content-Type": "application/json",
+				},
 			},
-			body: JSON.stringify({
-				name: domain,
-				// Optional: Redirect www. to root domain
-				// ...(domain.startsWith("www.") && {
-				//   redirect: domain.replace("www.", ""),
-				// }),
-			}),
-		},
-	).then((res) => res.json());
-};
+		).then((res) => {
+			return res.json();
+		});
+	};
+
+	export const addDomainToVercel = async (domain: string) => {
+		return await fetch(
+			`https://api.vercel.com/v10/projects/${VERCEL_PROJECT_ID}/domains${
+				VERCEL_TEAM_ID ? `?teamId=${VERCEL_TEAM_ID}` : ""
+			}`,
+			{
+				method: "POST",
+				headers: {
+					Authorization: `Bearer ${VERCEL_AUTH_TOKEN}`,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					name: domain,
+					// Optional: Redirect www. to root domain
+					// ...(domain.startsWith("www.") && {
+					//   redirect: domain.replace("www.", ""),
+					// }),
+				}),
+			},
+		).then((res) => res.json());
+	};
+
+	export const getConfigResponse = async (
+		domain: string,
+	): Promise<DomainConfigResponse> => {
+		return await fetch(
+			`https://api.vercel.com/v6/domains/${domain}/config${
+				VERCEL_TEAM_ID ? `?teamId=${VERCEL_TEAM_ID}` : ""
+			}`,
+			{
+				method: "GET",
+				headers: {
+					Authorization: `Bearer ${VERCEL_AUTH_TOKEN}`,
+					"Content-Type": "application/json",
+				},
+			},
+		).then((res) => res.json());
+	};
+
+	export const verifyDomain = async (
+		domain: string,
+	): Promise<DomainResponse> => {
+		return await fetch(
+			`https://api.vercel.com/v9/projects/${VERCEL_PROJECT_ID}/domains/${domain}/verify${
+				VERCEL_TEAM_ID ? `?teamId=${VERCEL_TEAM_ID}` : ""
+			}`,
+			{
+				method: "POST",
+				headers: {
+					Authorization: `Bearer ${VERCEL_AUTH_TOKEN}`,
+					"Content-Type": "application/json",
+				},
+			},
+		).then((res) => res.json());
+	};
+}
 
 export const updateSite = async (domain: string) => {
 	if (domain.includes("vercel.pub")) {
@@ -88,76 +127,23 @@ export const updateSite = async (domain: string) => {
 		};
 	}
 
-	// empty value means the user wants to remove the custom domain
-	if (domain === "") {
-		await fetch(
-			`https://api.vercel.com/v9/projects/${VERCEL_PROJECT_ID}/domains/${domain}${
-				VERCEL_TEAM_ID ? `?teamId=${VERCEL_TEAM_ID}` : ""
-			}`,
-			{
-				headers: {
-					Authorization: `Bearer ${VERCEL_AUTH_TOKEN}`,
-				},
-				method: "DELETE",
-			},
-		);
-	} else {
-		await Promise.all([
-			addDomainToVercel(domain),
-			// Optional: add www subdomain as well and redirect to apex domain
-			// addDomainToVercel(`www.${value}`),
-		]);
-	}
+	await Promise.all([
+		VercelAPI.addDomainToVercel(domain),
+		// Optional: add www subdomain as well and redirect to apex domain
+		// addDomainToVercel(`www.${value}`),
+	]);
+
 	return {
 		success: "Custom domain added successfully",
 	};
-};
-
-export type DomainVerificationStatusProps =
-	| "Valid Configuration"
-	| "Invalid Configuration"
-	| "Pending Verification"
-	| "Domain Not Found"
-	| "Unknown Error";
-
-export const getConfigResponse = async (
-	domain: string,
-): Promise<DomainConfigResponse> => {
-	return await fetch(
-		`https://api.vercel.com/v6/domains/${domain}/config${
-			VERCEL_TEAM_ID ? `?teamId=${VERCEL_TEAM_ID}` : ""
-		}`,
-		{
-			method: "GET",
-			headers: {
-				Authorization: `Bearer ${VERCEL_AUTH_TOKEN}`,
-				"Content-Type": "application/json",
-			},
-		},
-	).then((res) => res.json());
-};
-
-export const verifyDomain = async (domain: string): Promise<DomainResponse> => {
-	return await fetch(
-		`https://api.vercel.com/v9/projects/${VERCEL_PROJECT_ID}/domains/${domain}/verify${
-			VERCEL_TEAM_ID ? `?teamId=${VERCEL_TEAM_ID}` : ""
-		}`,
-		{
-			method: "POST",
-			headers: {
-				Authorization: `Bearer ${VERCEL_AUTH_TOKEN}`,
-				"Content-Type": "application/json",
-			},
-		},
-	).then((res) => res.json());
 };
 
 export async function getDomainStatus(domain: string) {
 	let status: DomainVerificationStatusProps = "Valid Configuration";
 
 	const [domainJson, configJson] = await Promise.all([
-		getDomainResponse(domain),
-		getConfigResponse(domain),
+		VercelAPI.getDomainResponse(domain),
+		VercelAPI.getConfigResponse(domain),
 	]);
 
 	if (domainJson?.error?.code === "not_found") {
@@ -171,7 +157,7 @@ export async function getDomainStatus(domain: string) {
 		// if domain is not verified, we try to verify now
 	} else if (!domainJson.verified) {
 		status = "Pending Verification";
-		const verificationJson = await verifyDomain(domain);
+		const verificationJson = await VercelAPI.verifyDomain(domain);
 
 		// domain was just verified
 		if (verificationJson?.verified) {

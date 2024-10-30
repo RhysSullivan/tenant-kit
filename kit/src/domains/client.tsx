@@ -108,6 +108,7 @@ function DomainConfiguration(props: { domain: string }) {
 		);
 	}
 
+	console.log(domainJson, domainJson.name, domainJson.apexName);
 	const selectedTab = tab
 		? tab
 		: txtVerification

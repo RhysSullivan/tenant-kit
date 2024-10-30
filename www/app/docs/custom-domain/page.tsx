@@ -63,11 +63,11 @@ export default function Page() {
 						<span className="text-lg font-semibold">
 							Custom domain component CNAME configuration
 						</span>
-						<SiteSettingsDomains defaultDomain="domain.rhys.dev" />
+						<SiteSettingsDomains defaultDomain="domain.rhyssul.com" />
 					</div>
 					<div className="flex flex-col gap-2">
 						<span className="text-lg font-semibold">
-							Custom domain component A configuration
+							Custom domain component Apex configuration
 						</span>
 						<SiteSettingsDomains defaultDomain="rhys.dev" />
 					</div>
