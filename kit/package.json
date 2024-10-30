@@ -1,44 +1,44 @@
 {
-  "name": "@tenant-kit/kit",
-  "version": "0.1.0",
-  "private": true,
-  "exports": {
-    "./*": "./src/*.tsx",
-    "./globals.css": "./globals.css",
-    "./postcss-config": "./postcss.config.mjs",
-    "./tailwind-config": "./tailwind.config.ts"
-  },
-  "dependencies": {
-    "@hookform/resolvers": "^3.9.0",
-    "@radix-ui/react-label": "^2.1.0",
-    "@radix-ui/react-slot": "^1.1.0",
-    "@radix-ui/react-tabs": "^1.1.0",
-    "@tanstack/react-query": "^5.50.1",
-    "bright": "^0.8.5",
-    "class-variance-authority": "^0.7.0",
-    "clsx": "^2.1.1",
-    "lucide-react": "^0.400.0",
+	"name": "@tenant-kit/kit",
+	"version": "0.1.0",
+	"private": true,
+	"exports": {
+		"./*": "./src/*.tsx",
+		"./globals.css": "./globals.css",
+		"./postcss-config": "./postcss.config.mjs",
+		"./tailwind-config": "./tailwind.config.ts"
+	},
+	"dependencies": {
+		"@hookform/resolvers": "^3.9.0",
+		"@radix-ui/react-label": "^2.1.0",
+		"@radix-ui/react-slot": "^1.1.0",
+		"@radix-ui/react-tabs": "^1.1.0",
+		"@tanstack/react-query": "^5.50.1",
+		"bright": "^0.8.5",
+		"class-variance-authority": "^0.7.0",
+		"clsx": "^2.1.1",
+		"lucide-react": "^0.400.0",
 
-    "react": "19.0.0-rc-cae764ce-20241025",
-    "react-dom": "19.0.0-rc-cae764ce-20241025",
-    "react-hook-form": "^7.52.1",
-    "swr": "^2.2.5",
-    "tailwind-merge": "^2.3.0",
-    "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.23.8"
-  },
-  "devDependencies": {
-    "@types/react": "npm:types-react@rc",
-    "@types/react-dom": "npm:types-react-dom@rc",
-    "@types/node": "22.7.8",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.4",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
-    "typescript": "^5"
-  },
-  "overrides": {
-    "@types/react": "npm:types-react@rc",
-    "@types/react-dom": "npm:types-react-dom@rc"
-  }
+		"react": "19.0.0-rc-cae764ce-20241025",
+		"react-dom": "19.0.0-rc-cae764ce-20241025",
+		"react-hook-form": "^7.52.1",
+		"swr": "^2.2.5",
+		"tailwind-merge": "^2.3.0",
+		"tailwindcss-animate": "^1.0.7",
+		"zod": "^3.23.8"
+	},
+	"devDependencies": {
+		"@types/react": "npm:types-react@rc",
+		"@types/react-dom": "npm:types-react-dom@rc",
+		"@types/node": "22.7.8",
+		"eslint": "^8",
+		"eslint-config-next": "14.2.4",
+		"postcss": "^8",
+		"tailwindcss": "^3.4.1",
+		"typescript": "^5"
+	},
+	"overrides": {
+		"@types/react": "npm:types-react@rc",
+		"@types/react-dom": "npm:types-react-dom@rc"
+	}
 }
