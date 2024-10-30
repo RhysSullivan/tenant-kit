@@ -99,7 +99,7 @@ function DomainConfiguration(props: { domain: string }) {
 
 	const txtVerification =
 		(status === "Pending Verification" &&
-			domainJson.verification.find((x: any) => x.type === "TXT")) ||
+			domainJson.verification.find((x) => x.type === "TXT")) ||
 		null;
 
 	if (status === "Unknown Error") {

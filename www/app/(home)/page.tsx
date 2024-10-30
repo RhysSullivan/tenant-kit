@@ -94,7 +94,7 @@ export default async function HomePage() {
 					<a
 						href="https://twitter.com/rhyssullivan"
 						className="hover:underline text-blue-300"
-						target="_blank"
+						target="_blank" rel="noreferrer"
 					>
 						Twitter
 					</a>{" "}

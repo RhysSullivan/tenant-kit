@@ -6,7 +6,7 @@ import {
 	DocsDescription,
 	DocsBody,
 } from "fumadocs-ui/page";
-import fs from "fs";
+import fs from "node:fs";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CopyButton } from "./copy-button";
 
