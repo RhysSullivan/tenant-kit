@@ -1,5 +1,7 @@
 "use server";
 
+import { z } from "zod";
+
 // Vercel API is wrapped in a namespace to keep this file focused on addDomain and getDomainStatus
 namespace VercelAPI {
 	const VERCEL_PROJECT_ID = process.env.VERCEL_PROJECT_ID;
@@ -30,18 +32,28 @@ namespace VercelAPI {
 		misconfigured: boolean;
 	}
 
+	function callVercelApi(path: string, options: RequestInit) {
+		return fetch(
+			`https://api.vercel.com/${path}${VERCEL_TEAM_ID ? `?teamId=${VERCEL_TEAM_ID}` : ""}`,
+			{
+				...options,
+				headers: {
+					Authorization: `Bearer ${VERCEL_AUTH_TOKEN}`,
+					...options.headers,
+				},
+			},
+		);
+	}
+
 	// https://vercel.com/docs/rest-api/endpoints/domains#domains
 	export const getDomainResponse = async (
 		domain: string,
 	): Promise<DomainResponse & { error: { code: string; message: string } }> => {
-		return await fetch(
-			`https://api.vercel.com/v9/projects/${VERCEL_PROJECT_ID}/domains/${domain}${
-				VERCEL_TEAM_ID ? `?teamId=${VERCEL_TEAM_ID}` : ""
-			}`,
+		return await callVercelApi(
+			`v9/projects/${VERCEL_PROJECT_ID}/domains/${domain}`,
 			{
 				method: "GET",
 				headers: {
-					Authorization: `Bearer ${VERCEL_AUTH_TOKEN}`,
 					"Content-Type": "application/json",
 				},
 			},
@@ -51,55 +63,40 @@ namespace VercelAPI {
 	};
 
 	export const addDomainToVercel = async (domain: string) => {
-		return await fetch(
-			`https://api.vercel.com/v10/projects/${VERCEL_PROJECT_ID}/domains${
-				VERCEL_TEAM_ID ? `?teamId=${VERCEL_TEAM_ID}` : ""
-			}`,
-			{
-				method: "POST",
-				headers: {
-					Authorization: `Bearer ${VERCEL_AUTH_TOKEN}`,
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					name: domain,
-					// Optional: Redirect www. to root domain
-					// ...(domain.startsWith("www.") && {
-					//   redirect: domain.replace("www.", ""),
-					// }),
-				}),
+		return await callVercelApi(`v10/projects/${VERCEL_PROJECT_ID}/domains`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
 			},
-		).then((res) => res.json());
+			body: JSON.stringify({
+				name: domain,
+				// Optional: Redirect www. to root domain
+				// ...(domain.startsWith("www.") && {
+				//   redirect: domain.replace("www.", ""),
+				// }),
+			}),
+		}).then((res) => res.json());
 	};
 
 	export const getConfigResponse = async (
 		domain: string,
 	): Promise<DomainConfigResponse> => {
-		return await fetch(
-			`https://api.vercel.com/v6/domains/${domain}/config${
-				VERCEL_TEAM_ID ? `?teamId=${VERCEL_TEAM_ID}` : ""
-			}`,
-			{
-				method: "GET",
-				headers: {
-					Authorization: `Bearer ${VERCEL_AUTH_TOKEN}`,
-					"Content-Type": "application/json",
-				},
+		return await callVercelApi(`v6/domains/${domain}/config`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
 			},
-		).then((res) => res.json());
+		}).then((res) => res.json());
 	};
 
 	export const verifyDomain = async (
 		domain: string,
 	): Promise<DomainResponse> => {
-		return await fetch(
-			`https://api.vercel.com/v9/projects/${VERCEL_PROJECT_ID}/domains/${domain}/verify${
-				VERCEL_TEAM_ID ? `?teamId=${VERCEL_TEAM_ID}` : ""
-			}`,
+		return await callVercelApi(
+			`v9/projects/${VERCEL_PROJECT_ID}/domains/${domain}/verify`,
 			{
 				method: "POST",
 				headers: {
-					Authorization: `Bearer ${VERCEL_AUTH_TOKEN}`,
 					"Content-Type": "application/json",
 				},
 			},
@@ -114,25 +111,24 @@ type DomainVerificationStatusProps =
 	| "Domain Not Found"
 	| "Unknown Error";
 
-export const addDomain = async (domain: string) => {
+export const addDomain = async (unsafeDomain: string) => {
+	const domain = new URL(`https://${unsafeDomain}`).hostname;
 	if (domain.includes("vercel.pub")) {
 		return {
 			error: "Cannot use vercel.pub subdomain as your custom domain",
 		};
 	}
 
+	// TODO: handle case where domain is added to another project
 	await Promise.all([
 		VercelAPI.addDomainToVercel(domain),
 		// Optional: add www subdomain as well and redirect to apex domain
 		// addDomainToVercel(`www.${value}`),
 	]);
-
-	return {
-		success: "Custom domain added successfully",
-	};
 };
 
-export async function getDomainStatus(domain: string) {
+export async function getDomainStatus(unsafeDomain: string) {
+	const domain = new URL(`https://${unsafeDomain}`).hostname;
 	let status: DomainVerificationStatusProps = "Valid Configuration";
 
 	const [domainJson, configJson] = await Promise.all([

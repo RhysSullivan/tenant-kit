@@ -56,6 +56,9 @@ namespace VercelAPI {
 				headers: {
 					"Content-Type": "application/json",
 				},
+				next: {
+					revalidate: 60,
+				},
 			},
 		).then((res) => {
 			return res.json();
@@ -85,6 +88,10 @@ namespace VercelAPI {
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json",
+			},
+
+			next: {
+				revalidate: 60,
 			},
 		}).then((res) => res.json());
 	};
