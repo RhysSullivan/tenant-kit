@@ -93,6 +93,9 @@ importers:
       '@hookform/resolvers':
         specifier: ^3.9.0
         version: 3.9.0(react-hook-form@7.52.1(react@19.0.0-rc-cae764ce-20241025))
+      '@radix-ui/react-checkbox':
+        specifier: ^1.1.2
+        version: 1.1.2(react-dom@19.0.0-rc-cae764ce-20241025(react@19.0.0-rc-cae764ce-20241025))(react@19.0.0-rc-cae764ce-20241025)(types-react-dom@19.0.0-rc.1)(types-react@19.0.0-rc.1)
       '@radix-ui/react-label':
         specifier: ^2.1.0
         version: 2.1.0(react-dom@19.0.0-rc-cae764ce-20241025(react@19.0.0-rc-cae764ce-20241025))(react@19.0.0-rc-cae764ce-20241025)(types-react-dom@19.0.0-rc.1)(types-react@19.0.0-rc.1)
@@ -728,6 +731,19 @@ packages:
 
   '@radix-ui/react-arrow@1.1.0':
     resolution: {integrity: sha512-FmlW1rCg7hBpEBwFbjHwCW6AmWLQM6g/v0Sn8XbP9NvmSZ2San1FpQeyPtufzOMSIx7Y4dzjlHoifhp+7NkZhw==}
+    peerDependencies:
+      '@types/react': '*'
+      '@types/react-dom': '*'
+      react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+      react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
+
+  '@radix-ui/react-checkbox@1.1.2':
+    resolution: {integrity: sha512-/i0fl686zaJbDQLNKrkCbMyDm6FQMt4jg323k7HuqitoANm9sE23Ql8yOK3Wusk34HSLKDChhMux05FnP6KUkw==}
     peerDependencies:
       '@types/react': '*'
       '@types/react-dom': '*'
@@ -3886,6 +3902,22 @@ snapshots:
   '@radix-ui/react-arrow@1.1.0(react-dom@19.0.0-rc-cae764ce-20241025(react@19.0.0-rc-cae764ce-20241025))(react@19.0.0-rc-cae764ce-20241025)(types-react-dom@19.0.0-rc.1)(types-react@19.0.0-rc.1)':
     dependencies:
       '@radix-ui/react-primitive': 2.0.0(react-dom@19.0.0-rc-cae764ce-20241025(react@19.0.0-rc-cae764ce-20241025))(react@19.0.0-rc-cae764ce-20241025)(types-react-dom@19.0.0-rc.1)(types-react@19.0.0-rc.1)
+      react: 19.0.0-rc-cae764ce-20241025
+      react-dom: 19.0.0-rc-cae764ce-20241025(react@19.0.0-rc-cae764ce-20241025)
+    optionalDependencies:
+      '@types/react': types-react@19.0.0-rc.1
+      '@types/react-dom': types-react-dom@19.0.0-rc.1
+
+  '@radix-ui/react-checkbox@1.1.2(react-dom@19.0.0-rc-cae764ce-20241025(react@19.0.0-rc-cae764ce-20241025))(react@19.0.0-rc-cae764ce-20241025)(types-react-dom@19.0.0-rc.1)(types-react@19.0.0-rc.1)':
+    dependencies:
+      '@radix-ui/primitive': 1.1.0
+      '@radix-ui/react-compose-refs': 1.1.0(react@19.0.0-rc-cae764ce-20241025)(types-react@19.0.0-rc.1)
+      '@radix-ui/react-context': 1.1.1(react@19.0.0-rc-cae764ce-20241025)(types-react@19.0.0-rc.1)
+      '@radix-ui/react-presence': 1.1.1(react-dom@19.0.0-rc-cae764ce-20241025(react@19.0.0-rc-cae764ce-20241025))(react@19.0.0-rc-cae764ce-20241025)(types-react-dom@19.0.0-rc.1)(types-react@19.0.0-rc.1)
+      '@radix-ui/react-primitive': 2.0.0(react-dom@19.0.0-rc-cae764ce-20241025(react@19.0.0-rc-cae764ce-20241025))(react@19.0.0-rc-cae764ce-20241025)(types-react-dom@19.0.0-rc.1)(types-react@19.0.0-rc.1)
+      '@radix-ui/react-use-controllable-state': 1.1.0(react@19.0.0-rc-cae764ce-20241025)(types-react@19.0.0-rc.1)
+      '@radix-ui/react-use-previous': 1.1.0(react@19.0.0-rc-cae764ce-20241025)(types-react@19.0.0-rc.1)
+      '@radix-ui/react-use-size': 1.1.0(react@19.0.0-rc-cae764ce-20241025)(types-react@19.0.0-rc.1)
       react: 19.0.0-rc-cae764ce-20241025
       react-dom: 19.0.0-rc-cae764ce-20241025(react@19.0.0-rc-cae764ce-20241025)
     optionalDependencies:

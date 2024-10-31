@@ -1,18 +1,9 @@
 import Link from "next/link";
 import { SiteSettingsDomains } from "@/components/domains/client";
 import { Button } from "@/components/ui/button";
-type ProjectDetails = {
-	name: string;
-	apexName: string;
-	projectId: string;
-	redirect: string | null;
-	redirectStatusCode: number | null;
-	gitBranch: string | null;
-	customEnvironmentId: string | null;
-	updatedAt: number;
-	createdAt: number;
-	verified: boolean;
-};
+import { Checkbox } from "@/components/ui/checkbox";
+import { ExternalLinkIcon } from "lucide-react";
+
 export default async function HomePage() {
 	return (
 		<main className=" w-full px-4 ">
@@ -32,35 +23,57 @@ export default async function HomePage() {
 					{/* Domains */}
 					<h3 className="text-base font-semibold py-2">Domains</h3>
 					<ul>
-						<li className="pl-4">Custom domains i.e tenant.example.com</li>
-						<li className="pl-4">Subpaths i.e example.com/tenant</li>
-						<li className="pl-4">
+						<li className="pl-4 flex items-center gap-2">
+							<Checkbox checked={true} aria-readonly />
+							<a href="/docs/custom-domain" className="hover:underline">
+								Custom domains i.e tenant.example.com
+							</a>
+							<ExternalLinkIcon className="w-4 h-4" />
+						</li>
+						<li className="pl-4 flex items-center gap-2">
+							<Checkbox aria-readonly checked={false} />
+							Subpaths i.e example.com/tenant (🚧 Up next 🚧)
+						</li>
+						<li className="pl-4 flex items-center gap-2">
+							<Checkbox aria-readonly checked={false} />
 							Using a custom domain as a handle i.e Bluesky (ATProtocol)
 						</li>
 					</ul>
 					{/* Customization */}
 					<h3 className="text-base font-semibold py-2">Customization</h3>
 					<ul>
-						<li className="pl-4">
+						<li className="pl-4 flex items-center gap-2">
+							<Checkbox aria-readonly checked={false} />
 							Supporting custom HTML, CSS, and JavaScript
 						</li>
-						<li className="pl-4">
+						<li className="pl-4 flex items-center gap-2">
+							<Checkbox aria-readonly checked={false} />
 							Adding built in support for most analytics providers
 						</li>
 					</ul>
 					{/* Auth */}
 					<h3 className="text-base font-semibold py-2">Authentication</h3>
 					<ul>
-						<li className="pl-4">
+						<li className="pl-4 flex items-center gap-2">
+							<Checkbox aria-readonly checked={false} />
 							Auth across subdomains, subpaths, and custom domains
 						</li>
 					</ul>
 					{/* Hosting */}
 					<h3 className="text-base font-semibold py-2">Hosting</h3>
 					<ul>
-						<li className="pl-4">Multi tenancy on Vercel</li>
-						<li className="pl-4">Multi tenancy on Cloudflare</li>
-						<li className="pl-4">Multi tenancy on a $5 VPS</li>
+						<li className="pl-4 flex items-center gap-2">
+							<Checkbox aria-readonly checked={false} />
+							Multi tenancy on Vercel
+						</li>
+						<li className="pl-4 flex items-center gap-2">
+							<Checkbox aria-readonly checked={false} />
+							Multi tenancy on Cloudflare
+						</li>
+						<li className="pl-4 flex items-center gap-2">
+							<Checkbox aria-readonly checked={false} />
+							Multi tenancy on a $5 VPS
+						</li>
 					</ul>
 				</div>
 				<div className="pb-2 ">Try out the custom domain component below!</div>
