@@ -1,6 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { unstable_checkRateLimit as checkRateLimit } from "@vercel/firewall";
+import { headers } from "next/headers";
 
 // Vercel API is wrapped in a namespace to keep this file focused on addDomain and getDomainStatus
 namespace VercelAPI {
@@ -112,6 +114,12 @@ namespace VercelAPI {
 }
 
 export const addDomain = async (unsafeDomain: string) => {
+	const { rateLimited } = await checkRateLimit("update-domain", {
+		headers: await headers(),
+	});
+	if (rateLimited) {
+		throw new Error("Rate limited");
+	}
 	const domain = new URL(`https://${unsafeDomain}`).hostname;
 	if (domain.includes("vercel.pub")) {
 		return {
