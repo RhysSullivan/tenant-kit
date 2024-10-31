@@ -286,13 +286,13 @@ export function SiteSettingsDomains(props: {
 					<CardTitle className="text-lg font-semibold">Custom Domain</CardTitle>
 					<CardDescription>The custom domain for your site.</CardDescription>
 				</CardHeader>
-				<CardContent className="relative bg-background flex flex-row items-center justify-between w-full">
+				<CardContent className="relative  flex flex-row items-center justify-between w-full">
 					<Input
 						type="text"
 						name="customDomain"
 						placeholder={"example.com"}
 						maxLength={64}
-						className="max-w-sm bg-background"
+						className="max-w-sm"
 						defaultValue={props.defaultDomain}
 					/>
 					<div className="flex items-center space-x-2">
