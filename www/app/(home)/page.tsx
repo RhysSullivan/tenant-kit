@@ -40,7 +40,8 @@ export default async function HomePage() {
 			.slice(0, 5)
 			.filter(
 				// filter to only last 5 minutes
-				(domain) => new Date().getTime() - domain.updatedAt < 300000,
+				(domain) =>
+					new Date().getTime() - domain.updatedAt < 300000 && domain.verified,
 			),
 	);
 	return (
@@ -93,7 +94,7 @@ export default async function HomePage() {
 					</ul>
 				</div>
 				<SiteSettingsDomains />
-				<div className="py-4">Recently Added Domains</div>
+				<div className="py-4">Recently Verified Domains</div>
 				<span className="text-sm text-muted-foreground">
 					To prevent abuse, this list is only domains added in the last 5
 					minutes.
