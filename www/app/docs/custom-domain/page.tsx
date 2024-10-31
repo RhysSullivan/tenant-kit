@@ -1,4 +1,3 @@
-import { SiteSettingsDomains } from "@/domains/client";
 import { Code } from "bright";
 import {
 	DocsPage,
@@ -9,6 +8,7 @@ import {
 import fs from "node:fs";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CopyButton } from "./copy-button";
+import { SiteSettingsDomains } from "@/components/domains/client";
 
 export default function Page() {
 	const pwd = process.cwd();

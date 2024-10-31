@@ -20,6 +20,9 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 
+const CNAME_VALUE = `cname.${process.env.NEXT_PUBLIC_ROOT_DOMAIN ?? "vercel-dns.com"}`;
+const A_VALUE = "76.76.21.21";
+
 function DNSRecordDisplay({
 	type,
 	name,
@@ -197,7 +200,7 @@ function DomainConfiguration(props: { domain: string }) {
 					<DNSRecordDisplay
 						type={"CNAME"}
 						name={subdomain ?? "www"}
-						value={`cname.${process.env.NEXT_PUBLIC_ROOT_DOMAIN ?? "vercel-dns.com"}`}
+						value={CNAME_VALUE}
 						ttl="86400"
 					/>
 				</div>
@@ -209,7 +212,7 @@ function DomainConfiguration(props: { domain: string }) {
 						<InlineSnippet>{domainJson.apexName}</InlineSnippet>, set the
 						following A record on your DNS provider to continue:
 					</span>
-					<DNSRecordDisplay type="A" name="@" value="76.76.21.21" ttl="86400" />
+					<DNSRecordDisplay type="A" name="@" value={A_VALUE} ttl="86400" />
 				</div>
 			</TabsContent>
 			{selectedTab !== "txt" && (
