@@ -1,4 +1,5 @@
 import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
+import { Globe } from "lucide-react";
 
 /**
  * Shared layout configurations
@@ -9,7 +10,12 @@ import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
  */
 export const baseOptions: BaseLayoutProps = {
 	nav: {
-		title: "Tenant Kit",
+		title: (
+			<div className="flex flex-row items-center justify-center gap-2">
+				<Globe className="w-4 h-4" />
+				<span>Tenant Kit</span>
+			</div>
+		),
 	},
 	githubUrl: "https://github.com/rhyssullivan/tenant-kit",
 	links: [
