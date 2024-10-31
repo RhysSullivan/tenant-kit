@@ -1,7 +1,5 @@
 "use server";
 
-import { z } from "zod";
-
 // Vercel API is wrapped in a namespace to keep this file focused on addDomain and getDomainStatus
 namespace VercelAPI {
 	const VERCEL_PROJECT_ID = process.env.VERCEL_PROJECT_ID;
@@ -104,13 +102,6 @@ namespace VercelAPI {
 	};
 }
 
-type DomainVerificationStatusProps =
-	| "Valid Configuration"
-	| "Invalid Configuration"
-	| "Pending Verification"
-	| "Domain Not Found"
-	| "Unknown Error";
-
 export const addDomain = async (unsafeDomain: string) => {
 	const domain = new URL(`https://${unsafeDomain}`).hostname;
 	if (domain.includes("vercel.pub")) {
@@ -129,7 +120,7 @@ export const addDomain = async (unsafeDomain: string) => {
 
 export async function getDomainStatus(unsafeDomain: string) {
 	const domain = new URL(`https://${unsafeDomain}`).hostname;
-	let status: DomainVerificationStatusProps = "Valid Configuration";
+	let status = "Valid Configuration";
 
 	const [domainJson, configJson] = await Promise.all([
 		VercelAPI.getDomainResponse(domain),

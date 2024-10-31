@@ -57,7 +57,7 @@ export function useDomainStatus(domain: string) {
 	const query = useQuery({
 		queryKey: [`custom-domain-status-${domain}`],
 		queryFn: () => getDomainStatus(domain),
-		refetchInterval: 5000,
+		refetchInterval: 20000, // every 20 seconds
 	});
 
 	return {
@@ -93,7 +93,6 @@ const InlineSnippet = ({
 
 function DomainConfiguration(props: { domain: string }) {
 	const { domain } = props;
-	const [tab, setTab] = useState<string | null>(null);
 
 	const { status, domainJson } = useDomainStatus(domain);
 
@@ -110,119 +109,110 @@ function DomainConfiguration(props: { domain: string }) {
 		return <p className="mb-5 text-sm">{domainJson.error.message}</p>;
 	}
 
-	const selectedTab = tab
-		? tab
-		: txtVerification
-			? "txt"
-			: domainJson.name === domainJson.apexName
-				? "apex"
-				: "subdomain";
-	const isApexName = domainJson.name === domainJson.apexName;
+	const selectedTab = txtVerification
+		? "txt"
+		: domainJson.name === domainJson.apexName
+			? "apex"
+			: "subdomain";
+
 	return (
-		<Tabs
-			onValueChange={(value) => setTab(value)}
-			value={selectedTab}
-			className="w-full"
-		>
-			<TabsList className="bg-background border-b-2 rounded-none  border-b-muted w-full justify-start ">
-				{txtVerification && (
+		<CardFooter className="border-t-2 border-muted flex justify-start flex-grow pt-4">
+			<Tabs value={selectedTab} className="w-full">
+				<TabsList className="bg-background border-b-2 rounded-none  border-b-muted w-full justify-start ">
 					<TabsTrigger
 						value="txt"
 						className={cn(
-							"bg-background p-2  text-muted-foreground rounded-none border-b-muted",
+							"bg-background p-2 hidden text-muted-foreground rounded-none border-b-muted",
 							selectedTab === "txt" &&
-								"border-b-primary border-b-2 text-primary",
+								"border-b-primary block border-b-2 text-primary",
 						)}
 					>
 						Domain Verification
 					</TabsTrigger>
-				)}
-				{!isApexName && !txtVerification && (
 					<TabsTrigger
 						value="subdomain"
 						className={cn(
-							"bg-background p-2 text-muted-foreground  rounded-none border-b-muted",
+							"bg-background p-2 text-muted-foreground hidden rounded-none border-b-muted",
 							selectedTab === "subdomain" &&
-								"border-b-primary border-b-2 text-primary",
+								"border-b-primary block border-b-2 text-primary",
 						)}
 					>
 						CNAME
 					</TabsTrigger>
-				)}
-				{isApexName && !txtVerification && (
 					<TabsTrigger
 						value="apex"
 						className={cn(
-							"bg-background   p-2 text-muted-foreground rounded-none border-b-muted",
+							"bg-background hidden p-2 text-muted-foreground rounded-none border-b-muted",
 							selectedTab === "apex" &&
-								"border-b-primary border-b-2  text-primary",
+								"border-b-primary block border-b-2 text-primary",
 						)}
 					>
 						Apex
 					</TabsTrigger>
+				</TabsList>
+				{txtVerification && (
+					<TabsContent value="txt">
+						<div className="flex flex-col space-y-4 pt-4">
+							<p className="text-sm text-muted-foreground ">
+								Please set the following TXT record on{" "}
+								<InlineSnippet>{domainJson.apexName}</InlineSnippet> to prove
+								ownership of <InlineSnippet>{domainJson.name}</InlineSnippet>:
+							</p>
+							<DNSRecordDisplay
+								name={txtVerification.domain.slice(
+									0,
+									txtVerification.domain.length -
+										domainJson.apexName.length -
+										1,
+								)}
+								type={txtVerification.type}
+								value={txtVerification.value}
+							/>
+							<p className="text-sm text-muted-foreground mt-4">
+								Warning: if you are using this domain for another site, setting
+								this TXT record will transfer domain ownership away from that
+								site and break it. Please exercise caution when setting this
+								record.
+							</p>
+						</div>
+					</TabsContent>
 				)}
-			</TabsList>
-
-			{txtVerification && (
-				<TabsContent value="txt">
-					<div className="flex flex-col space-y-4 pt-4">
-						<p className="text-sm text-muted-foreground ">
-							Please set the following TXT record on{" "}
-							<InlineSnippet>{domainJson.apexName}</InlineSnippet> to prove
-							ownership of <InlineSnippet>{domainJson.name}</InlineSnippet>:
-						</p>
+				<TabsContent value="subdomain">
+					<div className="flex flex-col gap-4 pt-4">
+						<span className="text-sm">
+							To configure your subdomain{" "}
+							<InlineSnippet>{domainJson.name}</InlineSnippet>, set the
+							following CNAME record on your DNS provider to continue:
+						</span>
 						<DNSRecordDisplay
-							name={txtVerification.domain.slice(
-								0,
-								txtVerification.domain.length - domainJson.apexName.length - 1,
-							)}
-							type={txtVerification.type}
-							value={txtVerification.value}
+							type={"CNAME"}
+							name={subdomain ?? "www"}
+							value={CNAME_VALUE}
+							ttl="86400"
 						/>
-						<p className="text-sm text-muted-foreground mt-4">
-							Warning: if you are using this domain for another site, setting
-							this TXT record will transfer domain ownership away from that site
-							and break it. Please exercise caution when setting this record.
-						</p>
 					</div>
 				</TabsContent>
-			)}
-
-			<TabsContent value="subdomain">
-				<div className="flex flex-col gap-4 pt-4">
-					<span className="text-sm">
-						To configure your subdomain{" "}
-						<InlineSnippet>{domainJson.name}</InlineSnippet>, set the following
-						CNAME record on your DNS provider to continue:
-					</span>
-					<DNSRecordDisplay
-						type={"CNAME"}
-						name={subdomain ?? "www"}
-						value={CNAME_VALUE}
-						ttl="86400"
-					/>
-				</div>
-			</TabsContent>
-			<TabsContent value="apex">
-				<div className="flex flex-col gap-4 pt-4">
-					<span className="text-sm">
-						To configure your domain{" "}
-						<InlineSnippet>{domainJson.apexName}</InlineSnippet>, set the
-						following A record on your DNS provider to continue:
-					</span>
-					<DNSRecordDisplay type="A" name="@" value={A_VALUE} ttl="86400" />
-				</div>
-			</TabsContent>
-			{selectedTab !== "txt" && (
-				<div className="my-3 text-left">
-					<p className="mt-5 text-sm dark:text-white">
-						Note: for TTL, if <InlineSnippet>86400</InlineSnippet> is not
-						available, set the highest value possible. Also, domain propagation
-						can take up to an hour.
-					</p>
-				</div>
-			)}
-		</Tabs>
+				<TabsContent value="apex">
+					<div className="flex flex-col gap-4 pt-4">
+						<span className="text-sm">
+							To configure your domain{" "}
+							<InlineSnippet>{domainJson.apexName}</InlineSnippet>, set the
+							following A record on your DNS provider to continue:
+						</span>
+						<DNSRecordDisplay type="A" name="@" value={A_VALUE} ttl="86400" />
+					</div>
+				</TabsContent>
+				{selectedTab !== "txt" && (
+					<div className="my-3 text-left">
+						<p className="mt-5 text-sm dark:text-white">
+							Note: for TTL, if <InlineSnippet>86400</InlineSnippet> is not
+							available, set the highest value possible. Also, domain
+							propagation can take up to an hour.
+						</p>
+					</div>
+				)}
+			</Tabs>
+		</CardFooter>
 	);
 }
 
@@ -309,11 +299,7 @@ export function SiteSettingsDomains(props: {
 						</Button>
 					</div>
 				</CardContent>
-				{domain && (
-					<CardFooter className="border-t-2 border-muted flex justify-start flex-grow pt-4">
-						<DomainConfiguration domain={domain} />
-					</CardFooter>
-				)}
+				{domain && <DomainConfiguration domain={domain} />}
 			</form>
 		</Card>
 	);
