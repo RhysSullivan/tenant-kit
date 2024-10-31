@@ -54,6 +54,8 @@ function DNSRecordDisplay({
 }
 
 export function useDomainStatus(domain: string) {
+	// Server actions aren't really meant to be used for data fetching
+	// They are changing this in the future with server functions, when that is updated this will be too
 	const query = useQuery({
 		queryKey: [`custom-domain-status-${domain}`],
 		queryFn: () => getDomainStatus(domain),
