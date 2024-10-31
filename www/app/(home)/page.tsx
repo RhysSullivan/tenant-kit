@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { SiteSettingsDomains } from "@tenant-kit/kit/domains/client";
-import { Button } from "@tenant-kit/kit/components/ui/button";
 import { DomainStatusCard } from "./components";
+import { SiteSettingsDomains } from "@/components/domains/client";
+import { Button } from "@/components/ui/button";
 type ProjectDetails = {
 	name: string;
 	apexName: string;

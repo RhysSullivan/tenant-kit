@@ -1,3 +1,8 @@
-import style from "@tenant-kit/kit/postcss-config";
+/** @type {import('postcss-load-config').Config} */
+const config = {
+	plugins: {
+		tailwindcss: {},
+	},
+};
 
-export default style;
+export default config;

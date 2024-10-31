@@ -1,6 +1,8 @@
 "use client";
+import { DomainStatus } from "@/components/domains/client";
+import { useDomainStatus } from "@/components/domains/client";
 import { Card } from "@/components/ui/card";
-import { DomainStatus, useDomainStatus } from "@/domains/client";
+
 import { ExternalLink } from "lucide-react";
 export function DomainStatusCard({ domain }: { domain: string }) {
 	const status = useDomainStatus(domain);

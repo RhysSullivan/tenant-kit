@@ -16,8 +16,7 @@
 		"jsx": "preserve",
 		"incremental": true,
 		"paths": {
-			"~/*": ["./*"],
-			"@/*": ["../kit/src/*"]
+			"@/*": ["./*"],
 		},
 		"plugins": [
 			{
