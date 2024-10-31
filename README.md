@@ -8,7 +8,7 @@ Open issues, PRs, and tweet feedback at me to make this better.
 
 
 
-## Features
+## Planned topics
 
 - Custom domain management
   - Subdomain support (tenant.example.com)
