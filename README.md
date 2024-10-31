@@ -10,17 +10,22 @@ Open issues, PRs, and tweet feedback at me to make this better.
 
 ## Planned topics
 
-- Custom domain management
-  - Subdomain support (tenant.example.com)
-  - Subpath support (example.com/tenant)
-  - Custom domain verification and configuration
-  - Automatic DNS record validation
-- Authentication across subdomains and custom domains
-- Built-in analytics provider support
-- Multi-tenant hosting support for:
-  - Vercel
-  - Cloudflare
-  - VPS deployments
+Domains
+- Custom domains i.e tenant.example.com
+- Subpaths i.e example.com/tenant
+- Using a custom domain as a handle i.e Bluesky (ATProtocol)
+
+Customization
+- Supporting custom HTML, CSS, and JavaScript
+- Adding built in support for most analytics providers
+
+Authentication
+- Auth across subdomains, subpaths, and custom domains
+
+Hosting
+- Multi tenancy on Vercel
+- Multi tenancy on Cloudflare
+- Multi tenancy on a $5 VPS
 
 ## Project Structure
 
