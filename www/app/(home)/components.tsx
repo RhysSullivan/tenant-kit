@@ -11,7 +11,7 @@ export function DomainStatusCard({ domain }: { domain: string }) {
 			<a
 				href={`https://${domain}`}
 				target="_blank"
-				className="hover:underline"
+				className="hover:underline flex flex-row items-center justify-center gap-2"
 				rel="noreferrer"
 			>
 				{domain}
