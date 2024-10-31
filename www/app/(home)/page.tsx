@@ -15,29 +15,34 @@ type ProjectDetails = {
 	verified: boolean;
 };
 export default async function HomePage() {
-	const recentDomains: ProjectDetails[] =
-		process.env.NODE_ENV === "development"
-			? []
-			: await fetch(
-					`https://api.vercel.com/v5/projects/${
-						process.env.VERCEL_PROJECT_ID
-					}/domains${
-						process.env.VERCEL_TEAM_ID
-							? `?teamId=${process.env.VERCEL_TEAM_ID}`
-							: ""
-					}`,
-					{
-						method: "GET",
-						headers: {
-							Authorization: `Bearer ${process.env.VERCEL_AUTH_TOKEN}`,
-							"Content-Type": "application/json",
-						},
-						next: {
-							revalidate: 600,
-						},
-					},
-				).then(async (res) => (await res.json()).domains.slice(0, 5));
-
+	const recentDomains = await fetch(
+		`https://api.vercel.com/v5/projects/${
+			process.env.VERCEL_PROJECT_ID
+		}/domains${
+			process.env.VERCEL_TEAM_ID ? `?teamId=${process.env.VERCEL_TEAM_ID}` : ""
+		}`,
+		{
+			method: "GET",
+			headers: {
+				Authorization: `Bearer ${process.env.VERCEL_AUTH_TOKEN}`,
+				"Content-Type": "application/json",
+			},
+			next: {
+				revalidate: 600,
+			},
+		},
+	).then(async (res) =>
+		(
+			(await res.json()) as {
+				domains: ProjectDetails[];
+			}
+		).domains
+			.slice(0, 5)
+			.filter(
+				// filter to only last 5 minutes
+				(domain) => new Date().getTime() - domain.updatedAt < 300000,
+			),
+	);
 	return (
 		<main className=" w-full px-4 ">
 			<div className="pb-32 max-w-screen-lg mx-auto">
@@ -89,7 +94,11 @@ export default async function HomePage() {
 				</div>
 				<SiteSettingsDomains />
 				<div className="py-4">Recently Added Domains</div>
-				<div className="flex flex-col gap-2">
+				<span className="text-sm text-muted-foreground">
+					To prevent abuse, this list is only domains added in the last 5
+					minutes.
+				</span>
+				<div className="flex flex-col gap-2 pt-2">
 					{recentDomains.map((domain) => (
 						<DomainStatusCard key={domain.name} domain={domain.name} />
 					))}
