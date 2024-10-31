@@ -18,33 +18,32 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 
-type DNSRecord = {
-	type: string;
-	name: string;
-	value: string;
-	ttl?: string;
-};
-
-function DNSRecordDisplay({ record }: { record: DNSRecord }) {
+function DNSRecordDisplay({
+	type,
+	name,
+	value,
+	ttl,
+}: { type: string; name: string; value: string; ttl?: string }) {
 	return (
 		<div className="flex items-center justify-start space-x-10 overflow-x-scroll max-w-[80vw] md:max-w-full bg-background p-4 rounded-md border-2 font-mono">
 			<div>
 				<p className="text-sm text-muted-foreground">Type</p>
-				<p className="mt-2 text-sm">{record.type}</p>
+				<p className="mt-2 text-sm">{type}</p>
 			</div>
 			<div>
 				<p className="text-sm text-muted-foreground">Name</p>
-				<p className="mt-2 text-sm">{record.name}</p>
+				<p className="mt-2 text-sm">{name}</p>
 			</div>
 			<div>
 				<p className="text-sm text-muted-foreground">Value</p>
-				<p className="mt-2 text-sm">{record.value}</p>
+				<p className="mt-2 text-sm">{value}</p>
 			</div>
-			{record.ttl && (
+			{ttl && (
 				<div>
 					<p className="text-sm text-muted-foreground">TTL</p>
-					<p className="mt-2 text-sm">{record.ttl}</p>
+					<p className="mt-2 text-sm">{ttl}</p>
 				</div>
 			)}
 		</div>
@@ -172,16 +171,12 @@ function DomainConfiguration(props: { domain: string }) {
 							ownership of <InlineSnippet>{domainJson.name}</InlineSnippet>:
 						</p>
 						<DNSRecordDisplay
-							record={{
-								name: txtVerification.domain.slice(
-									0,
-									txtVerification.domain.length -
-										domainJson.apexName.length -
-										1,
-								),
-								type: txtVerification.type,
-								value: txtVerification.value,
-							}}
+							name={txtVerification.domain.slice(
+								0,
+								txtVerification.domain.length - domainJson.apexName.length - 1,
+							)}
+							type={txtVerification.type}
+							value={txtVerification.value}
 						/>
 						<p className="text-sm text-muted-foreground mt-4">
 							Warning: if you are using this domain for another site, setting
@@ -200,14 +195,10 @@ function DomainConfiguration(props: { domain: string }) {
 						CNAME record on your DNS provider to continue:
 					</span>
 					<DNSRecordDisplay
-						record={{
-							type: "CNAME",
-							name: subdomain ?? "www",
-							value: `cname.${
-								process.env.NEXT_PUBLIC_ROOT_DOMAIN ?? "vercel-dns.com"
-							}`,
-							ttl: "86400",
-						}}
+						type={"CNAME"}
+						name={subdomain ?? "www"}
+						value={`cname.${process.env.NEXT_PUBLIC_ROOT_DOMAIN ?? "vercel-dns.com"}`}
+						ttl="86400"
 					/>
 				</div>
 			</TabsContent>
@@ -218,14 +209,7 @@ function DomainConfiguration(props: { domain: string }) {
 						<InlineSnippet>{domainJson.apexName}</InlineSnippet>, set the
 						following A record on your DNS provider to continue:
 					</span>
-					<DNSRecordDisplay
-						record={{
-							type: "A",
-							name: "@",
-							value: "76.76.21.21",
-							ttl: "86400",
-						}}
-					/>
+					<DNSRecordDisplay type="A" name="@" value="76.76.21.21" ttl="86400" />
 				</div>
 			</TabsContent>
 			{selectedTab !== "txt" && (
@@ -238,24 +222,6 @@ function DomainConfiguration(props: { domain: string }) {
 				</div>
 			)}
 		</Tabs>
-	);
-}
-
-function FormButton() {
-	const { pending } = useFormStatus();
-	return (
-		<button
-			className={cn(
-				"flex h-8 w-32 items-center justify-center space-x-2 rounded-md border text-sm transition-all focus:outline-none sm:h-10",
-				pending
-					? "cursor-not-allowed border-stone-200 bg-stone-100 text-stone-400 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-300"
-					: "border-black bg-black text-white hover:bg-white hover:text-black dark:border-stone-700 dark:hover:border-stone-200 dark:hover:bg-black dark:hover:text-white dark:active:bg-stone-800",
-			)}
-			disabled={pending}
-			type="submit"
-		>
-			{pending ? <p>Pending...</p> : <p>Save Changes</p>}
-		</button>
 	);
 }
 
@@ -310,6 +276,7 @@ export function SiteSettingsDomains(props: {
 	const [domain, setDomain] = useState<string | null>(
 		props.defaultDomain ?? null,
 	);
+	const { pending } = useFormStatus();
 	return (
 		<Card className="flex flex-col space-y-6">
 			<form
@@ -337,7 +304,9 @@ export function SiteSettingsDomains(props: {
 					<div className="flex items-center space-x-2">
 						{domain && <DomainStatus domain={domain} />}
 
-						<FormButton />
+						<Button type="submit" variant="outline">
+							{pending ? <LoaderCircle className="animate-spin" /> : "Save"}
+						</Button>
 					</div>
 				</CardContent>
 				{domain && (

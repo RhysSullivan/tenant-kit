@@ -6,7 +6,12 @@ export function DomainStatusCard({ domain }: { domain: string }) {
 	const status = useDomainStatus(domain);
 	return (
 		<Card className="p-4 flex flex-row gap-2 items-center justify-between">
-			<a href={`https://${domain}`} target="_blank" className="hover:underline" rel="noreferrer">
+			<a
+				href={`https://${domain}`}
+				target="_blank"
+				className="hover:underline"
+				rel="noreferrer"
+			>
 				{domain}
 				<ExternalLink className="w-4 h-4" />
 			</a>
