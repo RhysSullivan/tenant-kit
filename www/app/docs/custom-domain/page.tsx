@@ -19,11 +19,11 @@ export default function Page() {
 			<DocsTitle>Custom Domain</DocsTitle>
 			<DocsDescription>Set up a custom domain for your tenant</DocsDescription>
 			<DocsBody>
-				<div className="flex flex-col gap-2 not-prose">
+				<div className="flex flex-col gap-4 not-prose">
 					<span className="text-lg font-semibold">
 						Default custom domain component
 					</span>
-					<span>
+					<span className="text-sm text-muted-foreground">
 						This code is an updated version of the{" "}
 						<a
 							href="https://github.com/vercel/platforms"
