@@ -102,7 +102,28 @@ namespace VercelAPI {
 	};
 }
 
+namespace Internal {
+	export function checkAuth() {
+		throw new Error(
+			"Update the checkAuth() function in the actions.ts file to check for auth before calling this function. You can disable this if you're just testing.",
+		);
+	}
+	export function checkAddRateLimit() {
+		throw new Error(
+			"Update the checkAddRateLimit() function in the actions.ts file to check for add rate limit before calling this function. You can disable this if you're just testing.",
+		);
+	}
+	export function checkGetRateLimit() {
+		throw new Error(
+			"Update the checkGetRateLimit() function in the actions.ts file to check for get rate limit before calling this function. You can disable this if you're just testing.",
+		);
+	}
+}
+
 export const addDomain = async (unsafeDomain: string) => {
+	Internal.checkAuth();
+	Internal.checkAddRateLimit();
+
 	const domain = new URL(`https://${unsafeDomain}`).hostname;
 	if (domain.includes("vercel.pub")) {
 		return {
@@ -119,6 +140,9 @@ export const addDomain = async (unsafeDomain: string) => {
 };
 
 export async function getDomainStatus(unsafeDomain: string) {
+	Internal.checkAuth();
+	Internal.checkGetRateLimit();
+
 	const domain = new URL(`https://${unsafeDomain}`).hostname;
 	let status = "Valid Configuration";
 

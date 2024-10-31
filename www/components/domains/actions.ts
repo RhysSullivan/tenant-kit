@@ -113,13 +113,34 @@ namespace VercelAPI {
 	};
 }
 
-export const addDomain = async (unsafeDomain: string) => {
-	const { rateLimited } = await checkRateLimit("update-domain", {
-		headers: await headers(),
-	});
-	if (rateLimited) {
-		throw new Error("Rate limited");
+namespace Internal {
+	export function checkAuth() {
+		return null;
 	}
+	export async function checkAddRateLimit() {
+		const { rateLimited } = await checkRateLimit("update-domain", {
+			headers: await headers(),
+		});
+
+		if (rateLimited) {
+			throw new Error("Rate limited");
+		}
+	}
+	export async function checkGetRateLimit() {
+		const { rateLimited } = await checkRateLimit("get-domains", {
+			headers: await headers(),
+		});
+
+		if (rateLimited) {
+			throw new Error("Rate limited");
+		}
+	}
+}
+
+export const addDomain = async (unsafeDomain: string) => {
+	Internal.checkAuth();
+	Internal.checkAddRateLimit();
+
 	const domain = new URL(`https://${unsafeDomain}`).hostname;
 	if (domain.includes("vercel.pub")) {
 		return {
@@ -137,6 +158,8 @@ export const addDomain = async (unsafeDomain: string) => {
 };
 
 export async function getDomainStatus(unsafeDomain: string) {
+	Internal.checkGetRateLimit();
+	Internal.checkAuth();
 	const domain = new URL(`https://${unsafeDomain}`).hostname;
 	let status = "Valid Configuration";
 
