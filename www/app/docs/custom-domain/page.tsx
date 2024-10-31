@@ -23,6 +23,19 @@ export default function Page() {
 					<span className="text-lg font-semibold">
 						Default custom domain component
 					</span>
+					<span>
+						This code is an updated version of the{" "}
+						<a
+							href="https://github.com/vercel/platforms"
+							// biome-ignore lint/a11y/noBlankTarget: <explanation>
+							target="_blank"
+							className="text-blue-500 hover:underline"
+						>
+							Platforms
+						</a>{" "}
+						project from Vercel, meant to be a more drop in style using shadcn &
+						server actions
+					</span>
 					<SiteSettingsDomains />
 				</div>
 				<div className="py-4">
@@ -36,14 +49,36 @@ export default function Page() {
 							className="max-h-[500px] overflow-y-auto pt-2"
 						>
 							<CopyButton text={client} className="absolute right-2 -top-1" />
-							<Code lang="tsx" code={client} />
+							<Code
+								lang="tsx"
+								code={client}
+								className="hidden dark:block"
+								theme="github-dark"
+							/>
+							<Code
+								lang="tsx"
+								code={client}
+								theme="github-light"
+								className="block dark:hidden"
+							/>
 						</TabsContent>
 						<TabsContent
 							value="actions"
 							className="max-h-[500px] overflow-y-auto pt-2"
 						>
 							<CopyButton text={action} className="absolute right-2 -top-1" />
-							<Code lang="tsx" code={action} />
+							<Code
+								lang="tsx"
+								className="hidden dark:block"
+								code={action}
+								theme="github-dark"
+							/>
+							<Code
+								lang="tsx"
+								className="block dark:hidden"
+								code={action}
+								theme="github-light"
+							/>
 						</TabsContent>
 					</Tabs>
 				</div>
