@@ -67,10 +67,6 @@ The documentation site is built using [Fumadocs](https://fumadocs.vercel.app) an
 2. Create a feature branch
 3. Submit a pull request
 
-## License
-
-This project is private and not currently available for public use.
-
 ## Support
 
 For support or sponsorship inquiries:
