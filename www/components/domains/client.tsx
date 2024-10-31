@@ -8,7 +8,6 @@ import { useState } from "react";
 import { useFormStatus } from "react-dom";
 
 import { getDomainStatus, addDomain } from "./actions";
-import { useQuery } from "@tanstack/react-query";
 import {
 	Card,
 	CardContent,
@@ -19,6 +18,7 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import useSWR from "swr";
 
 const CNAME_VALUE = `cname.${process.env.NEXT_PUBLIC_ROOT_DOMAIN ?? "vercel-dns.com"}`;
 const A_VALUE = "76.76.21.21";
@@ -54,16 +54,20 @@ function DNSRecordDisplay({
 }
 
 export function useDomainStatus(domain: string) {
-	const query = useQuery({
-		queryKey: [`custom-domain-status-${domain}`],
-		queryFn: () => getDomainStatus(domain),
-		refetchInterval: 20000, // every 20 seconds
-	});
+	const { data, isLoading } = useSWR(
+		`domain-status-${domain}`,
+		// Server actions aren't really meant to be used for data fetching
+		// They are changing this in the future with server functions, when that is updated this will be too
+		() => getDomainStatus(domain),
+		{
+			refreshInterval: 20000, // every 20 seconds
+		},
+	);
 
 	return {
-		status: query.data?.status,
-		domainJson: query.data?.domainJson,
-		loading: query.isLoading,
+		status: data?.status,
+		domainJson: data?.domainJson,
+		loading: isLoading,
 	};
 }
 
