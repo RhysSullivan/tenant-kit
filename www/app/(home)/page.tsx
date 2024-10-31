@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { DomainStatusCard } from "./components";
 import { SiteSettingsDomains } from "@/components/domains/client";
 import { Button } from "@/components/ui/button";
 type ProjectDetails = {
@@ -15,35 +14,6 @@ type ProjectDetails = {
 	verified: boolean;
 };
 export default async function HomePage() {
-	const recentDomains = await fetch(
-		`https://api.vercel.com/v5/projects/${
-			process.env.VERCEL_PROJECT_ID
-		}/domains${
-			process.env.VERCEL_TEAM_ID ? `?teamId=${process.env.VERCEL_TEAM_ID}` : ""
-		}`,
-		{
-			method: "GET",
-			headers: {
-				Authorization: `Bearer ${process.env.VERCEL_AUTH_TOKEN}`,
-				"Content-Type": "application/json",
-			},
-			next: {
-				revalidate: 600,
-			},
-		},
-	).then(async (res) =>
-		(
-			(await res.json()) as {
-				domains: ProjectDetails[];
-			}
-		).domains
-			.slice(0, 5)
-			.filter(
-				// filter to only last 5 minutes
-				(domain) =>
-					new Date().getTime() - domain.updatedAt < 300000 && domain.verified,
-			),
-	);
 	return (
 		<main className=" w-full px-4 ">
 			<div className="pb-32 max-w-screen-lg mx-auto">
@@ -93,17 +63,8 @@ export default async function HomePage() {
 						<li className="pl-4">Multi tenancy on a $5 VPS</li>
 					</ul>
 				</div>
+				<div className="pb-2 ">Try out the custom domain component below!</div>
 				<SiteSettingsDomains />
-				<div className="py-4">Recently Verified Domains</div>
-				<span className="text-sm text-muted-foreground">
-					To prevent abuse, this list is only domains added in the last 5
-					minutes.
-				</span>
-				<div className="flex flex-col gap-2 pt-2">
-					{recentDomains.map((domain) => (
-						<DomainStatusCard key={domain.name} domain={domain.name} />
-					))}
-				</div>
 				<div className="py-4">
 					Interested in sponsoring the development of this project? Reach out on{" "}
 					<a
