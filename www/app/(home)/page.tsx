@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { SiteSettingsDomains } from "@/components/domains/client";
+import { CustomDomainConfigurator } from "@/components/domains/client";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ExternalLinkIcon } from "lucide-react";
@@ -77,7 +77,7 @@ export default async function HomePage() {
 					</ul>
 				</div>
 				<div className="pb-2 ">Try out the custom domain component below!</div>
-				<SiteSettingsDomains />
+				<CustomDomainConfigurator />
 				<div className="py-4">
 					Interested in sponsoring the development of this project? Reach out on{" "}
 					<a

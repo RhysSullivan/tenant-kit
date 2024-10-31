@@ -2,21 +2,26 @@
 
 import { Button } from "@/components/ui/button";
 import { Check, Copy } from "lucide-react";
+import { usePostHog } from "posthog-js/react";
 import { useState } from "react";
 
 interface CopyButtonProps {
 	text: string;
 	className?: string;
+	name: string;
 }
 
-export function CopyButton({ text, className = "" }: CopyButtonProps) {
+export function CopyButton({ text, className = "", name }: CopyButtonProps) {
 	const [isCopied, setIsCopied] = useState(false);
-
+	const posthog = usePostHog();
 	const copyToClipboard = async () => {
 		try {
 			await navigator.clipboard.writeText(text);
 			setIsCopied(true);
 			setTimeout(() => setIsCopied(false), 2000);
+			posthog.capture("Copy to clipboard", {
+				name,
+			});
 		} catch (err) {
 			console.error("Failed to copy text: ", err);
 		}

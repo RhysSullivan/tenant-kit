@@ -8,7 +8,7 @@ import {
 import fs from "node:fs";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CopyButton } from "./copy-button";
-import { SiteSettingsDomains } from "@/components/domains/client";
+import { CustomDomainConfigurator } from "@/components/domains/client";
 
 export default function Page() {
 	const pwd = process.cwd();
@@ -36,7 +36,7 @@ export default function Page() {
 						project from Vercel, meant to be a more drop in style using shadcn &
 						server actions
 					</span>
-					<SiteSettingsDomains />
+					<CustomDomainConfigurator />
 				</div>
 				<div className="py-4">
 					<Tabs defaultValue="client" className="relative ">
@@ -48,7 +48,11 @@ export default function Page() {
 							value="client"
 							className="max-h-[500px] overflow-y-auto pt-2"
 						>
-							<CopyButton text={client} className="absolute right-2 -top-1" />
+							<CopyButton
+								text={client}
+								name="Custom Domain Client"
+								className="absolute right-2 -top-1"
+							/>
 							<Code
 								lang="tsx"
 								code={client}
@@ -66,7 +70,11 @@ export default function Page() {
 							value="actions"
 							className="max-h-[500px] overflow-y-auto pt-2"
 						>
-							<CopyButton text={action} className="absolute right-2 -top-1" />
+							<CopyButton
+								text={action}
+								name="Custom Domain Action"
+								className="absolute right-2 -top-1"
+							/>
 							<Code
 								lang="tsx"
 								className="hidden dark:block"
@@ -91,25 +99,25 @@ export default function Page() {
 						<span className="text-lg font-semibold">
 							Custom domain component pending txt verification
 						</span>
-						<SiteSettingsDomains defaultDomain="test.test.com" />
+						<CustomDomainConfigurator defaultDomain="test.test.com" />
 					</div>
 					<div className="flex flex-col gap-2">
 						<span className="text-lg font-semibold">
 							Custom domain component CNAME configuration
 						</span>
-						<SiteSettingsDomains defaultDomain="example.til.wiki" />
+						<CustomDomainConfigurator defaultDomain="example.til.wiki" />
 					</div>
 					<div className="flex flex-col gap-2">
 						<span className="text-lg font-semibold">
 							Custom domain component Apex configuration
 						</span>
-						<SiteSettingsDomains defaultDomain="til.wiki" />
+						<CustomDomainConfigurator defaultDomain="til.wiki" />
 					</div>
 					<div className="flex flex-col gap-2">
 						<span className="text-lg font-semibold">
 							Successfully added domain
 						</span>
-						<SiteSettingsDomains defaultDomain="tk.rhys.dev" />
+						<CustomDomainConfigurator defaultDomain="tk.rhys.dev" />
 					</div>
 				</div>
 			</DocsBody>

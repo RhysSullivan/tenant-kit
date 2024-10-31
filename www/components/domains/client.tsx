@@ -264,7 +264,7 @@ export function DomainStatus({ domain }: { domain: string }) {
 	return null;
 }
 
-export function SiteSettingsDomains(props: {
+export function CustomDomainConfigurator(props: {
 	defaultDomain?: string;
 }) {
 	const [domain, setDomain] = useState<string | null>(
