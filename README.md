@@ -8,7 +8,7 @@ Open issues, PRs, and tweet feedback at me to make this better.
 
 
 
-## Features
+## Planned topics
 
 - Custom domain management
   - Subdomain support (tenant.example.com)
@@ -55,17 +55,6 @@ The documentation site is built using [Fumadocs](https://fumadocs.vercel.app) an
 - API documentation
 - Integration guides
 - Deployment instructions
-
-## Environment Variables
-
-Required environment variables for domain management:
-
-```
-VERCEL_PROJECT_ID=
-VERCEL_TEAM_ID=
-VERCEL_AUTH_TOKEN=
-NEXT_PUBLIC_ROOT_DOMAIN=
-```
 
 ## Contributing
 
