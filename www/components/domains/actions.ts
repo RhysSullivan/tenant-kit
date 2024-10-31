@@ -1,5 +1,7 @@
 "use server";
 
+import { z } from "zod";
+
 // Vercel API is wrapped in a namespace to keep this file focused on addDomain and getDomainStatus
 namespace VercelAPI {
 	const VERCEL_PROJECT_ID = process.env.VERCEL_PROJECT_ID;
@@ -109,25 +111,24 @@ type DomainVerificationStatusProps =
 	| "Domain Not Found"
 	| "Unknown Error";
 
-export const addDomain = async (domain: string) => {
+export const addDomain = async (unsafeDomain: string) => {
+	const domain = new URL(`https://${unsafeDomain}`).hostname;
 	if (domain.includes("vercel.pub")) {
 		return {
 			error: "Cannot use vercel.pub subdomain as your custom domain",
 		};
 	}
 
+	// TODO: handle case where domain is added to another project
 	await Promise.all([
 		VercelAPI.addDomainToVercel(domain),
 		// Optional: add www subdomain as well and redirect to apex domain
 		// addDomainToVercel(`www.${value}`),
 	]);
-
-	return {
-		success: "Custom domain added successfully",
-	};
 };
 
-export async function getDomainStatus(domain: string) {
+export async function getDomainStatus(unsafeDomain: string) {
+	const domain = new URL(`https://${unsafeDomain}`).hostname;
 	let status: DomainVerificationStatusProps = "Valid Configuration";
 
 	const [domainJson, configJson] = await Promise.all([

@@ -110,7 +110,6 @@ function DomainConfiguration(props: { domain: string }) {
 		return <p className="mb-5 text-sm">{domainJson.error.message}</p>;
 	}
 
-	console.log(domainJson, domainJson.name, domainJson.apexName);
 	const selectedTab = tab
 		? tab
 		: txtVerification
@@ -126,7 +125,7 @@ function DomainConfiguration(props: { domain: string }) {
 			className="w-full"
 		>
 			<TabsList className="bg-background border-b-2 rounded-none  border-b-muted w-full justify-start ">
-				{txtVerification ? (
+				{txtVerification && (
 					<TabsTrigger
 						value="txt"
 						className={cn(
@@ -137,31 +136,30 @@ function DomainConfiguration(props: { domain: string }) {
 					>
 						Domain Verification
 					</TabsTrigger>
-				) : (
-					<>
-						<TabsTrigger
-							value="subdomain"
-							className={cn(
-								"bg-background p-2 text-muted-foreground  rounded-none border-b-muted",
-								selectedTab === "subdomain" &&
-									"border-b-primary border-b-2 text-primary",
-							)}
-						>
-							CNAME (Recommended)
-						</TabsTrigger>
-						{isApexName && (
-							<TabsTrigger
-								value="apex"
-								className={cn(
-									"bg-background   p-2 text-muted-foreground rounded-none border-b-muted",
-									selectedTab === "apex" &&
-										"border-b-primary border-b-2  text-primary",
-								)}
-							>
-								Apex
-							</TabsTrigger>
+				)}
+				{!isApexName && !txtVerification && (
+					<TabsTrigger
+						value="subdomain"
+						className={cn(
+							"bg-background p-2 text-muted-foreground  rounded-none border-b-muted",
+							selectedTab === "subdomain" &&
+								"border-b-primary border-b-2 text-primary",
 						)}
-					</>
+					>
+						CNAME
+					</TabsTrigger>
+				)}
+				{isApexName && !txtVerification && (
+					<TabsTrigger
+						value="apex"
+						className={cn(
+							"bg-background   p-2 text-muted-foreground rounded-none border-b-muted",
+							selectedTab === "apex" &&
+								"border-b-primary border-b-2  text-primary",
+						)}
+					>
+						Apex
+					</TabsTrigger>
 				)}
 			</TabsList>
 

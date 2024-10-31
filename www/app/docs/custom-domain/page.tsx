@@ -12,7 +12,6 @@ import { SiteSettingsDomains } from "@/components/domains/client";
 
 export default function Page() {
 	const pwd = process.cwd();
-	console.log(pwd);
 	const client = fs.readFileSync("../kit/src/domains/client.tsx", "utf-8");
 	const action = fs.readFileSync("../kit/src/domains/actions.ts", "utf-8");
 	return (
@@ -63,13 +62,19 @@ export default function Page() {
 						<span className="text-lg font-semibold">
 							Custom domain component CNAME configuration
 						</span>
-						<SiteSettingsDomains defaultDomain="domain.rhyssul.com" />
+						<SiteSettingsDomains defaultDomain="example.til.wiki" />
 					</div>
 					<div className="flex flex-col gap-2">
 						<span className="text-lg font-semibold">
 							Custom domain component Apex configuration
 						</span>
-						<SiteSettingsDomains defaultDomain="rhys.dev" />
+						<SiteSettingsDomains defaultDomain="til.wiki" />
+					</div>
+					<div className="flex flex-col gap-2">
+						<span className="text-lg font-semibold">
+							Successfully added domain
+						</span>
+						<SiteSettingsDomains defaultDomain="tk.rhys.dev" />
 					</div>
 				</div>
 			</DocsBody>
