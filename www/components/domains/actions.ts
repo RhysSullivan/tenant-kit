@@ -1,5 +1,7 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+
 // Vercel API is wrapped in a namespace to keep this file focused on addDomain and getDomainStatus
 namespace VercelAPI {
 	const VERCEL_PROJECT_ID = process.env.VERCEL_PROJECT_ID;
@@ -123,6 +125,7 @@ export const addDomain = async (unsafeDomain: string) => {
 		// Optional: add www subdomain as well and redirect to apex domain
 		// addDomainToVercel(`www.${value}`),
 	]);
+	revalidatePath("/");
 };
 
 export async function getDomainStatus(unsafeDomain: string) {
