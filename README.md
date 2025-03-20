@@ -67,12 +67,6 @@ The documentation site is built using [Fumadocs](https://fumadocs.vercel.app) an
 2. Create a feature branch
 3. Submit a pull request
 
-## Support
-
-For support or sponsorship inquiries:
-- Twitter: [@rhyssullivan](https://twitter.com/rhyssullivan)
-- Email: me@rhys.dev
-
 ## Tech Stack
 
 - Next.js 15.0.0
