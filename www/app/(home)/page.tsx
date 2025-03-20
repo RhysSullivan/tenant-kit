@@ -78,18 +78,6 @@ export default async function HomePage() {
 				</div>
 				<div className="pb-2 ">Try out the custom domain component below!</div>
 				<CustomDomainConfigurator />
-				<div className="py-4">
-					Interested in sponsoring the development of this project? Reach out on{" "}
-					<a
-						href="https://twitter.com/rhyssullivan"
-						className="hover:underline text-blue-300"
-						target="_blank"
-						rel="noreferrer"
-					>
-						Twitter
-					</a>{" "}
-					or contact me at <a href="mailto:rhys@fumadocs.com">me@rhys.dev</a>
-				</div>
 				<div className="mx-auto w-full flex justify-center py-8">
 					<Button asChild variant="outline">
 						<Link
